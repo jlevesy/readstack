@@ -1,0 +1,24 @@
+version: '3.4'
+
+networks:
+  dev:
+    driver: bridge
+
+services:
+  app:
+    image: golang:alpine
+    volumes:
+      - ${PWD}:/go/src/github.com/jlevesy/readstack
+    networks:
+      - dev
+    depends_on:
+      - db
+  db:
+    image: postgres:alpine
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=notsecreat
+    ports:
+      - 5432:5432
+    networks:
+      - dev
