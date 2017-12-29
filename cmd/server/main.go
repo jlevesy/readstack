@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	postgresUrl = "postgres://readstack:notsecret@db:5432/readstack?sslmode=disable"
+	postgresURL = "postgres://readstack:notsecret@db:5432/readstack?sslmode=disable"
 )
 
-func createArticle() (http.Handler, error) {
-	_, err := postgres.NewArticleRepository(postgresUrl)
+func createItem() (http.Handler, error) {
+	_, err := postgres.NewItemRepository(postgresURL)
 
 	if err != nil {
 		return nil, err
@@ -27,11 +27,12 @@ func createArticle() (http.Handler, error) {
 func main() {
 	log.Println("Starting the server...")
 
-	createArticle, err := createArticle()
+	createItem, err := createItem()
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	http.Handle("/article", createArticle)
+	http.Handle("/item", createItem)
+	http.ListenAndServe(":8080", nil)
 }

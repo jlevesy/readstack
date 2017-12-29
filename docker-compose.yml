@@ -16,6 +16,10 @@ services:
       - dev
     depends_on:
       - db
+    command:
+      - go
+      - run
+      - /go/src/github.com/jlevesy/readstack/cmd/server/main.go
   db:
     image: postgres:alpine
     restart: always

@@ -4,14 +4,14 @@ import (
 	"net/url"
 )
 
-type Article struct {
+type Item struct {
 	ID   uint
 	Name string
 	URL  url.URL
 }
 
-func NewArticle(name string, URL url.URL) *Article {
-	return &Article{
+func NewItem(name string, URL url.URL) *Item {
+	return &Item{
 		Name: name,
 		URL:  URL,
 	}
