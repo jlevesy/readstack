@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/jlevesy/readstack/model"
@@ -23,12 +24,13 @@ func NewItemRepository(dbURL string) (repository.ItemRepository, error) {
 	return &itemRepository{db}, nil
 }
 
-func (i *itemRepository) Save(item *model.Item) error {
-	return i.db.QueryRow(
-		`INSERT INTO items(name, url) VALUES (?, ?) RETURNING id`,
+func (i *itemRepository) Save(ctx context.Context, item *model.Item) error {
+	return i.db.QueryRowContext(
+		ctx,
+		"INSERT INTO items(name, url) VALUES($1, $2) RETURNING id",
 		item.Name,
 		item.URL,
-	).Scan(item.ID)
+	).Scan(&item.ID)
 }
 
 func (i *itemRepository) Close() error {

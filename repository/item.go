@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"io"
 
 	"github.com/jlevesy/readstack/model"
@@ -9,5 +10,5 @@ import (
 type ItemRepository interface {
 	io.Closer
 
-	Save(*model.Item) error
+	Save(context.Context, *model.Item) error
 }
