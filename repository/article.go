@@ -6,4 +6,5 @@ import (
 
 type ArticleRepository interface {
 	Save(*model.Article) error
+	Close() error
 }

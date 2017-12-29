@@ -11,5 +11,8 @@ type Article struct {
 }
 
 func NewArticle(name string, URL url.URL) *Article {
-	return &Article{name, URL}
+	return &Article{
+		Name: name,
+		URL:  URL,
+	}
 }

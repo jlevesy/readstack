@@ -10,10 +10,10 @@ import (
 )
 
 type articleRepository struct {
-	db sql.DB
+	db *sql.DB
 }
 
-func NewArticleRepository(dbURL, string) (repository.ArticleRepository, error) {
+func NewArticleRepository(dbURL string) (repository.ArticleRepository, error) {
 	db, err := sql.Open("postgres", dbURL)
 
 	if err != nil {
@@ -23,8 +23,14 @@ func NewArticleRepository(dbURL, string) (repository.ArticleRepository, error) {
 	return &articleRepository{db}, nil
 }
 
-func (a *articleRepository) Save(a *model.Article) error {
-	return r.db.QueryRow(
-		`INSERT INTO articles(name, url) VALUES (?, ?) RETURNING id`, a.Name, a.URL,
-	).Scan(a.ID)
+func (a *articleRepository) Save(article *model.Article) error {
+	return a.db.QueryRow(
+		`INSERT INTO articles(name, url) VALUES (?, ?) RETURNING id`,
+		article.Name,
+		article.URL,
+	).Scan(article.ID)
+}
+
+func (a *articleRepository) Close() error {
+	return a.db.Close()
 }
