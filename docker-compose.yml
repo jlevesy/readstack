@@ -4,6 +4,9 @@ networks:
   dev:
     driver: bridge
 
+volumes:
+    db:
+
 services:
   app:
     image: golang:alpine
@@ -17,7 +20,11 @@ services:
     image: postgres:alpine
     restart: always
     environment:
-      - POSTGRES_PASSWORD=notsecreat
+      - POSTGRES_USER=readstack
+      - POSTGRES_PASSWORD=notsecret
+      - POSTGRES_DB=readstack
+    volumes:
+        - db:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:
