@@ -5,6 +5,7 @@ import (
 )
 
 type Article struct {
+	ID   uint
 	Name string
 	URL  url.URL
 }
