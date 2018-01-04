@@ -6,17 +6,30 @@ import (
 	"time"
 )
 
+type statusCodeCollector struct {
+	http.ResponseWriter
+	StatusCode int
+}
+
+func (s *statusCodeCollector) WriteHeader(statusCode int) {
+	s.ResponseWriter.WriteHeader(statusCode)
+	s.StatusCode = statusCode
+}
+
 func RequestLogger(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			log.Printf("Start %s", r.URL.Path)
+			log.Printf("%s %s", r.Method, r.URL.Path)
 
-			next.ServeHTTP(w, r)
+			s := statusCodeCollector{ResponseWriter: w}
+
+			next.ServeHTTP(&s, r)
 
 			log.Printf(
-				"End %s, Status %s, Duration %v",
+				"%s %s, Status %d, Duration %v",
+				r.Method,
 				r.URL.Path,
-				"[TODO GET STATUS !?]",
+				s.StatusCode,
 				20*time.Millisecond,
 			)
 		},
