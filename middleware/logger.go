@@ -3,7 +3,6 @@ package middleware
 import (
 	"log"
 	"net/http"
-	"time"
 )
 
 type statusCodeCollector struct {
@@ -30,7 +29,7 @@ func RequestLogger(next http.Handler) http.Handler {
 				r.Method,
 				r.URL.Path,
 				s.StatusCode,
-				20*time.Millisecond,
+				GetTimeRecorder(r.Context()).Read(HandlerProbe),
 			)
 		},
 	)

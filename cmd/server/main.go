@@ -27,14 +27,19 @@ func main() {
 
 	http.Handle(
 		"/item",
-		middleware.Timeout(
-			200*time.Millisecond,
-			middleware.RequestLogger(
-				middleware.Post(
-					item.NewCreateController(
-						createItem.NewHandler(
-							createItem.Validator,
-							itemRepository,
+		middleware.WithTimer(
+			middleware.Timeout(
+				200*time.Millisecond,
+				middleware.RequestLogger(
+					middleware.TimerProbe(
+						middleware.HandlerProbe,
+						middleware.Post(
+							item.NewCreateController(
+								createItem.NewHandler(
+									createItem.Validator,
+									itemRepository,
+								),
+							),
 						),
 					),
 				),
