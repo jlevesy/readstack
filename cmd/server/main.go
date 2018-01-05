@@ -23,9 +23,10 @@ const (
 )
 
 type config struct {
-	PostgresURL string
-	ListenHost  string
-	ListenPort  int
+	PostgresURL    string
+	ListenHost     string
+	ListenPort     int
+	DefaultTimeout time.Duration
 }
 
 func router(itemRepository repository.ItemRepository) http.Handler {
@@ -65,7 +66,7 @@ func main() {
 			fmt.Sprintf("%s:%d", config.ListenHost, config.ListenPort),
 			middleware.WithInMemoryTimingRecorder(
 				middleware.Timeout(
-					200*time.Millisecond,
+					config.DefaultTimeout,
 					middleware.RequestLogger(
 						middleware.RecordDuration(
 							middleware.HandlerDuration,

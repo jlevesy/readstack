@@ -21,6 +21,7 @@ services:
     environment:
         - READSTACK_POSTGRES_URL=postgres://readstack:notsecret@db:5432/readstack?sslmode=disable
         - READSTACK_LISTEN_PORT=8080
+        - READSTACK_DEFAULT_TIMEOUT=200ms
     command:
       - go
       - run
