@@ -41,6 +41,10 @@ func router(itemRepository repository.ItemRepository) http.Handler {
 		),
 	)
 
+	r.Path("/item").Methods("GET").Handler(
+		item.NewIndexController(),
+	)
+
 	return r
 }
 
