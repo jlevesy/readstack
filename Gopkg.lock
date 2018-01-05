@@ -8,20 +8,38 @@
   revision = "44e46d280b43ec1531bb25252440e34f1b800b65"
 
 [[projects]]
+  name = "github.com/gorilla/context"
+  packages = ["."]
+  revision = "1ea25387ff6f684839d82767c1733ff4d4d15d0a"
+  version = "v1.1"
+
+[[projects]]
+  name = "github.com/gorilla/mux"
+  packages = ["."]
+  revision = "7f08801859139f86dfafd1c296e2cba9a80d292e"
+  version = "v1.6.0"
+
+[[projects]]
   name = "github.com/jlevesy/envconfig"
-  packages = [".","setter"]
+  packages = [
+    ".",
+    "setter"
+  ]
   revision = "d2326d7f441f84c1f4871122501724214f173485"
   version = "v0.1.0"
 
 [[projects]]
   branch = "master"
   name = "github.com/lib/pq"
-  packages = [".","oid"]
+  packages = [
+    ".",
+    "oid"
+  ]
   revision = "83612a56d3dd153a94a629cd64925371c9adad78"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b6076f980e51435c31ba7d80640145e67bd8272f980ba1a9b125e8396e81924f"
+  inputs-digest = "2da088f9d7aa08047ce07f2dcf5eb1df60630e717d16c99ec5c3a81431d31fb6"
   solver-name = "gps-cdcl"
   solver-version = 1

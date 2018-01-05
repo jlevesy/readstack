@@ -5,9 +5,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/jlevesy/envconfig"
 
 	"github.com/jlevesy/readstack/middleware"
+	"github.com/jlevesy/readstack/repository"
 	"github.com/jlevesy/readstack/repository/postgres"
 
 	"github.com/jlevesy/readstack/controller/item"
@@ -21,6 +23,21 @@ const (
 
 type config struct {
 	PostgresURL string
+}
+
+func router(itemRepository repository.ItemRepository) http.Handler {
+	r := mux.NewRouter()
+
+	r.Path("/item").Methods("POST").Handler(
+		item.NewCreateController(
+			createItem.NewHandler(
+				createItem.Validator,
+				itemRepository,
+			),
+		),
+	)
+
+	return r
 }
 
 func main() {
@@ -40,27 +57,18 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.Handle(
-		"/item",
+	http.ListenAndServe(
+		":8080",
 		middleware.WithInMemoryTimingRecorder(
 			middleware.Timeout(
 				200*time.Millisecond,
 				middleware.RequestLogger(
 					middleware.RecordDuration(
 						middleware.HandlerDuration,
-						middleware.Post(
-							item.NewCreateController(
-								createItem.NewHandler(
-									createItem.Validator,
-									itemRepository,
-								),
-							),
-						),
+						router(itemRepository),
 					),
 				),
 			),
 		),
 	)
-
-	http.ListenAndServe(":8080", nil)
 }
