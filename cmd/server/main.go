@@ -27,12 +27,12 @@ func main() {
 
 	http.Handle(
 		"/item",
-		middleware.WithTimer(
+		middleware.WithInMemoryTimingRecorder(
 			middleware.Timeout(
 				200*time.Millisecond,
 				middleware.RequestLogger(
-					middleware.TimerProbe(
-						middleware.HandlerProbe,
+					middleware.RecordDuration(
+						middleware.HandlerDuration,
 						middleware.Post(
 							item.NewCreateController(
 								createItem.NewHandler(

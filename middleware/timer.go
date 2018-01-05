@@ -1,49 +1,27 @@
 package middleware
 
 import (
-	"context"
+	"net/http"
 	"time"
 
-	"net/http"
+	"github.com/jlevesy/readstack/timing"
 )
 
 const (
-	HandlerProbe = "handler"
-
-	recorderKey = "recorder"
+	HandlerDuration = "handler"
 )
 
-type Recorder interface {
-	Write(metric string, value time.Duration)
-	Read(metric string) time.Duration
-}
-
-type recorder map[string]time.Duration
-
-func (r recorder) Write(metric string, value time.Duration) {
-	r[metric] = value
-}
-
-func (r recorder) Read(metric string) time.Duration {
-	return r[metric]
-}
-
-func GetTimeRecorder(context context.Context) Recorder {
-	return context.Value(recorderKey).(Recorder)
-}
-
-func WithTimer(next http.Handler) http.Handler {
+func WithInMemoryTimingRecorder(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			recorder := recorder{}
+			rec := timing.NewInMemoryRecorder()
 
 			next.ServeHTTP(
 				w,
 				r.WithContext(
-					context.WithValue(
+					timing.WithRecorder(
 						r.Context(),
-						recorderKey,
-						recorder,
+						rec,
 					),
 				),
 			)
@@ -51,7 +29,7 @@ func WithTimer(next http.Handler) http.Handler {
 	)
 }
 
-func TimerProbe(probeName string, next http.Handler) http.Handler {
+func RecordDuration(metric string, next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
@@ -60,7 +38,7 @@ func TimerProbe(probeName string, next http.Handler) http.Handler {
 
 			end := time.Now()
 
-			GetTimeRecorder(r.Context()).Write(probeName, end.Sub(start))
+			timing.GetRecorder(r.Context()).Write(metric, end.Sub(start))
 		},
 	)
 }

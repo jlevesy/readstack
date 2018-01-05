@@ -3,6 +3,8 @@ package middleware
 import (
 	"log"
 	"net/http"
+
+	"github.com/jlevesy/readstack/timing"
 )
 
 type statusCodeCollector struct {
@@ -29,7 +31,7 @@ func RequestLogger(next http.Handler) http.Handler {
 				r.Method,
 				r.URL.Path,
 				s.StatusCode,
-				GetTimeRecorder(r.Context()).Read(HandlerProbe),
+				timing.GetRecorder(r.Context()).Read(HandlerDuration),
 			)
 		},
 	)
