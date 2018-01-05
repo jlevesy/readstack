@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/jlevesy/envconfig"
+
 	"github.com/jlevesy/readstack/middleware"
 	"github.com/jlevesy/readstack/repository/postgres"
 
@@ -13,13 +15,26 @@ import (
 )
 
 const (
-	postgresURL = "postgres://readstack:notsecret@db:5432/readstack?sslmode=disable"
+	readstackAppName = "READSTACK"
+	defaultSeparator = "_"
 )
+
+type config struct {
+	PostgresURL string
+}
 
 func main() {
 	log.Println("Starting the server...")
 
-	itemRepository, err := postgres.NewItemRepository(postgresURL)
+	config := config{}
+
+	if err := envconfig.New(readstackAppName, defaultSeparator).Load(&config); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("Loaded config %v", config)
+
+	itemRepository, err := postgres.NewItemRepository(config.PostgresURL)
 
 	if err != nil {
 		log.Fatal(err)

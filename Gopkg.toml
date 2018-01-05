@@ -24,3 +24,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/lib/pq"
+
+[[constraint]]
+  name = "github.com/jlevesy/envconfig"
+  version = "0.1.0"
