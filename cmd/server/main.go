@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -23,6 +24,8 @@ const (
 
 type config struct {
 	PostgresURL string
+	ListenHost  string
+	ListenPort  int
 }
 
 func router(itemRepository repository.ItemRepository) http.Handler {
@@ -57,15 +60,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.ListenAndServe(
-		":8080",
-		middleware.WithInMemoryTimingRecorder(
-			middleware.Timeout(
-				200*time.Millisecond,
-				middleware.RequestLogger(
-					middleware.RecordDuration(
-						middleware.HandlerDuration,
-						router(itemRepository),
+	log.Fatal(
+		http.ListenAndServe(
+			fmt.Sprintf("%s:%d", config.ListenHost, config.ListenPort),
+			middleware.WithInMemoryTimingRecorder(
+				middleware.Timeout(
+					200*time.Millisecond,
+					middleware.RequestLogger(
+						middleware.RecordDuration(
+							middleware.HandlerDuration,
+							router(itemRepository),
+						),
 					),
 				),
 			),
