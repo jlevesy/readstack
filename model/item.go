@@ -1,7 +1,7 @@
 package model
 
 type Item struct {
-	ID   uint
+	ID   int64
 	Name string
 	URL  string
 }
