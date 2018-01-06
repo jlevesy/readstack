@@ -10,12 +10,9 @@ import (
 	"github.com/jlevesy/envconfig"
 
 	"github.com/jlevesy/readstack/middleware"
-	"github.com/jlevesy/readstack/repository"
 	"github.com/jlevesy/readstack/repository/postgres"
 
 	"github.com/jlevesy/readstack/controller/item"
-	createItem "github.com/jlevesy/readstack/handler/item/create"
-	indexItem "github.com/jlevesy/readstack/handler/item/index"
 )
 
 const (
@@ -37,27 +34,6 @@ const (
 	defaultHandlerTimemout = 200 * time.Millisecond
 )
 
-func router(itemRepository repository.ItemRepository) http.Handler {
-	r := mux.NewRouter()
-
-	r.Path("/item").Methods("POST").Handler(
-		item.NewCreateController(
-			createItem.NewHandler(
-				createItem.Validator,
-				itemRepository,
-			),
-		),
-	)
-
-	r.Path("/item").Methods("GET").Handler(
-		item.NewIndexController(
-			indexItem.NewHandler(itemRepository),
-		),
-	)
-
-	return r
-}
-
 func main() {
 	log.Println("Starting the server...")
 
@@ -77,6 +53,11 @@ func main() {
 
 	defer itemRepository.Close()
 
+	r := mux.NewRouter()
+
+	apiV1 := r.PathPrefix("/api/v1").Subrouter()
+	item.MountRoutes(apiV1, itemRepository)
+
 	log.Fatal(
 		http.ListenAndServe(
 			fmt.Sprintf("%s:%d", config.ListenHost, config.ListenPort),
@@ -86,7 +67,7 @@ func main() {
 					middleware.RequestLogger(
 						middleware.RecordDuration(
 							middleware.HandlerDuration,
-							router(itemRepository),
+							r,
 						),
 					),
 				),
