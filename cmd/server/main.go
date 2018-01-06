@@ -27,8 +27,15 @@ type config struct {
 	PostgresURL    string
 	ListenHost     string
 	ListenPort     int
-	DefaultTimeout time.Duration
+	HandlerTimeout time.Duration
 }
+
+const (
+	defaultPostgresURL     = "postgres://root:root@localhost:5672/readstack"
+	defaultListenHost      = ""
+	defaultListenPort      = 8080
+	defaultHandlerTimemout = 200 * time.Millisecond
+)
 
 func router(itemRepository repository.ItemRepository) http.Handler {
 	r := mux.NewRouter()
@@ -54,7 +61,7 @@ func router(itemRepository repository.ItemRepository) http.Handler {
 func main() {
 	log.Println("Starting the server...")
 
-	config := config{}
+	config := config{defaultPostgresURL, defaultListenHost, defaultListenPort, defaultHandlerTimemout}
 
 	if err := envconfig.New(readstackAppName, defaultSeparator).Load(&config); err != nil {
 		log.Fatal(err)
@@ -75,7 +82,7 @@ func main() {
 			fmt.Sprintf("%s:%d", config.ListenHost, config.ListenPort),
 			middleware.WithInMemoryTimingRecorder(
 				middleware.Timeout(
-					config.DefaultTimeout,
+					config.HandlerTimeout,
 					middleware.RequestLogger(
 						middleware.RecordDuration(
 							middleware.HandlerDuration,
