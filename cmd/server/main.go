@@ -15,6 +15,7 @@ import (
 
 	"github.com/jlevesy/readstack/controller/item"
 	createItem "github.com/jlevesy/readstack/handler/item/create"
+	indexItem "github.com/jlevesy/readstack/handler/item/index"
 )
 
 const (
@@ -42,7 +43,9 @@ func router(itemRepository repository.ItemRepository) http.Handler {
 	)
 
 	r.Path("/item").Methods("GET").Handler(
-		item.NewIndexController(),
+		item.NewIndexController(
+			indexItem.NewHandler(itemRepository),
+		),
 	)
 
 	return r
