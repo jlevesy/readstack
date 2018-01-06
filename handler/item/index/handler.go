@@ -19,6 +19,11 @@ func NewHandler(repo repository.ItemRepository) Handler {
 }
 
 func (h *handler) Handle(ctx context.Context) (*Response, error) {
-	// TODO
-	return &Response{}, nil
+	res, err := h.repo.FindAll(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &Response{res}, nil
 }

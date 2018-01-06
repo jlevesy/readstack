@@ -68,6 +68,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	defer itemRepository.Close()
+
 	log.Fatal(
 		http.ListenAndServe(
 			fmt.Sprintf("%s:%d", config.ListenHost, config.ListenPort),
