@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/jlevesy/readstack/controller"
 	"github.com/jlevesy/readstack/handler/item/create"
 )
 
@@ -21,13 +22,12 @@ func (c *createController) ServeHTTP(w http.ResponseWriter, httpReq *http.Reques
 	var req create.Request
 
 	if err := json.NewDecoder(httpReq.Body).Decode(&req); err != nil {
-		// TODO factorize errors
-		http.Error(w, "Failed to decode JSON", http.StatusBadRequest)
+		controller.HandleError(w, err)
 		return
 	}
 
 	if err := c.handler.Handle(httpReq.Context(), &req); err != nil {
-		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		controller.HandleError(w, err)
 		return
 	}
 

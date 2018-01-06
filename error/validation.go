@@ -8,7 +8,7 @@ type ValidationError struct {
 	errors []error
 }
 
-func NewValidationEerror(errors []error) *ValidationError {
+func NewValidationError(errors []error) *ValidationError {
 	return &ValidationError{errors}
 }
 

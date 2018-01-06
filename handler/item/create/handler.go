@@ -3,7 +3,7 @@ package create
 import (
 	"context"
 
-	"github.com/jlevesy/readstack/err"
+	readstackError "github.com/jlevesy/readstack/error"
 	"github.com/jlevesy/readstack/model"
 	"github.com/jlevesy/readstack/repository"
 )
@@ -23,7 +23,7 @@ func NewHandler(validator ValidatorFunc, repository repository.ItemRepository) H
 
 func (h *handler) Handle(ctx context.Context, req *Request) error {
 	if errs := h.validator(req); len(errs) > 0 {
-		return err.NewValidationEerror(errs)
+		return readstackError.NewValidationError(errs)
 	}
 
 	item := model.NewItem(req.Name, req.URL)
