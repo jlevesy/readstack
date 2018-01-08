@@ -33,15 +33,7 @@ func (i *itemRepository) Save(ctx context.Context, item *model.Item) error {
 
 	defer stmt.Close()
 
-	res, err := stmt.ExecContext(ctx, item.Name, item.URL)
-
-	if err != nil {
-		return err
-	}
-
-	item.ID, err = res.LastInsertId()
-
-	return err
+	return stmt.QueryRowContext(ctx, item.Name, item.URL).Scan(&item.ID)
 }
 
 func (i *itemRepository) FindAll(ctx context.Context) ([]*model.Item, error) {
