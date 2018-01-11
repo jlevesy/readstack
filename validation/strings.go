@@ -1,13 +1,21 @@
 package validation
 
 import (
-	"fmt"
 	"strings"
+
+	"github.com/jlevesy/readstack/error"
 )
 
-func RequireNotBlank(attributeName, value string) error {
+const (
+	reasonNotBlank = "Should not be blank"
+)
+
+func RequireNotBlank(attributeName, value string) *error.Violation {
 	if strings.TrimSpace(value) == "" {
-		return fmt.Errorf("field %s not supposed to be blank", attributeName)
+		return &error.Violation{
+			Name:   attributeName,
+			Reason: reasonNotBlank,
+		}
 	}
 
 	return nil

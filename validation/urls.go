@@ -3,17 +3,30 @@ package validation
 import (
 	"fmt"
 	"net/url"
+
+	"github.com/jlevesy/readstack/error"
 )
 
-func RequireHTTPURL(attributeName, value string) error {
+const (
+	reasonParseFailed      = "Failed to parse URL, reason is :%s"
+	reasonUnsuportedScheme = "Unsuported URL scheme, only http and https are allowed"
+)
+
+func RequireHTTPURL(attributeName, value string) *error.Violation {
 	req, err := url.Parse(value)
 
 	if err != nil {
-		return fmt.Errorf("Failed to parse URL for attribute %s, error is %v", attributeName, err)
+		return &error.Violation{
+			Name:   attributeName,
+			Reason: fmt.Sprintf(reasonParseFailed, err),
+		}
 	}
 
 	if req.Scheme != "https" && req.Scheme != "http" {
-		return fmt.Errorf("Unsuported URL scheme, only http and https are allowed")
+		return &error.Violation{
+			Name:   attributeName,
+			Reason: reasonUnsuportedScheme,
+		}
 	}
 
 	return nil

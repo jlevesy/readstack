@@ -1,23 +1,34 @@
-package err
+package error
 
 import (
+	"fmt"
+
 	"strings"
 )
 
-type ValidationError struct {
-	errors []error
+type Violation struct {
+	Name   string
+	Reason string
 }
 
-func NewValidationError(errors []error) *ValidationError {
-	return &ValidationError{errors}
+func (v *Violation) Error() string {
+	return fmt.Sprintf("%s : %s", v.Name, v.Reason)
+}
+
+type ValidationError struct {
+	Violations []*Violation
+}
+
+func NewValidationError(violations []*Violation) *ValidationError {
+	return &ValidationError{violations}
 }
 
 func (v *ValidationError) Error() string {
-	msgs := make([]string, len(v.errors))
+	msgs := make([]string, len(v.Violations))
 
-	for i, err := range v.errors {
+	for i, err := range v.Violations {
 		msgs[i] = err.Error()
 	}
 
-	return strings.Join(msgs, ",")
+	return strings.Join(msgs, ", ")
 }
