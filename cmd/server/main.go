@@ -58,20 +58,24 @@ func main() {
 	apiV1 := r.PathPrefix("/api/v1").Subrouter()
 	item.MountRoutes(apiV1, itemRepository)
 
-	log.Fatal(
-		http.ListenAndServe(
-			fmt.Sprintf("%s:%d", config.ListenHost, config.ListenPort),
-			middleware.WithInMemoryTimingRecorder(
-				middleware.Timeout(
-					config.HandlerTimeout,
-					middleware.RequestLogger(
-						middleware.RecordDuration(
-							middleware.HandlerDuration,
-							r,
-						),
+	server := http.Server{
+		ReadTimeout:       time.Second,
+		ReadHeaderTimeout: time.Second,
+		WriteTimeout:      time.Second,
+		IdleTimeout:       time.Second,
+		Addr:              fmt.Sprintf("%s:%d", config.ListenHost, config.ListenPort),
+		Handler: middleware.WithInMemoryTimingRecorder(
+			middleware.Timeout(
+				config.HandlerTimeout,
+				middleware.RequestLogger(
+					middleware.RecordDuration(
+						middleware.HandlerDuration,
+						r,
 					),
 				),
 			),
 		),
-	)
+	}
+
+	log.Fatal(server.ListenAndServe())
 }
