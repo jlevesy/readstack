@@ -25,6 +25,7 @@ type config struct {
 	ListenHost     string
 	ListenPort     int
 	HandlerTimeout time.Duration
+	WebAssetsPath  string
 }
 
 const (
@@ -32,12 +33,13 @@ const (
 	defaultListenHost      = ""
 	defaultListenPort      = 8080
 	defaultHandlerTimemout = 200 * time.Millisecond
+	defaultWebAssetsPath   = "dist/web"
 )
 
 func main() {
 	log.Println("Starting the server...")
 
-	config := config{defaultPostgresURL, defaultListenHost, defaultListenPort, defaultHandlerTimemout}
+	config := config{defaultPostgresURL, defaultListenHost, defaultListenPort, defaultHandlerTimemout, defaultWebAssetsPath}
 
 	if err := envconfig.New(readstackAppName, defaultSeparator).Load(&config); err != nil {
 		log.Fatal(err)
@@ -54,6 +56,8 @@ func main() {
 	defer itemRepository.Close()
 
 	r := mux.NewRouter()
+
+	r.Path("/").Handler(http.FileServer(http.Dir(config.WebAssetsPath)))
 
 	apiV1 := r.PathPrefix("/api/v1").Subrouter()
 	item.MountRoutes(apiV1, itemRepository)
