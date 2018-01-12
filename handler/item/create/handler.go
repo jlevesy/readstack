@@ -8,6 +8,9 @@ import (
 	"github.com/jlevesy/readstack/repository"
 )
 
+// Handler processes incoming requests and returns a result.
+// It is dedicated to perform a new model.Item creation in the
+// given datastore
 type Handler interface {
 	Handle(ctx context.Context, req *Request) error
 }
@@ -17,6 +20,7 @@ type handler struct {
 	repository repository.ItemRepository
 }
 
+// NewHandler returns a Handler
 func NewHandler(validator ValidatorFunc, repository repository.ItemRepository) Handler {
 	return &handler{validator, repository}
 }
