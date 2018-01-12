@@ -1,8 +1,8 @@
 package create
 
 type Request struct {
-	Name string
-	URL  string
+	Name string `json:"name"`
+	URL  string `json:"url"`
 }
 
 func NewRequest(Name, URL string) *Request {
