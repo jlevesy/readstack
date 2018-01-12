@@ -12,25 +12,31 @@ func TestRequireHTTPURL(t *testing.T) {
 		ShouldRaiseError bool
 	}{
 		{
-			"ShouldRaiseErrorOnEmptyValue",
+			"itShouldRaiseErrorOnEmptyValue",
 			"Dummy",
 			"",
 			true,
 		},
 		{
-			"SouldRaiseErrorIfValueIsBlank",
+			"itShouldRaiseErrorIfValueIsBlank",
 			"Dummy",
 			"     ",
 			true,
 		},
 		{
-			"SouldRaiseErrorIfURLIsNotHTTP",
+			"itShouldRaiseErrorIfUnparseable",
+			"Dummy",
+			":",
+			true,
+		},
+		{
+			"itShouldRaiseErrorIfURLIsNotHTTP",
 			"Dummy",
 			"postgres://foo.bar.com/dbtoto",
 			true,
 		},
 		{
-			"ShouldNotRaiseErrorIfValueIsHTTPURL",
+			"itShouldNotRaiseErrorIfValueIsHTTPURL",
 			"Dummy",
 			"https://foo.bar.com/dbtoto",
 			false,

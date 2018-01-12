@@ -6,5 +6,8 @@ type Request struct {
 }
 
 func NewRequest(Name, URL string) *Request {
-	return &Request{Name, URL}
+	return &Request{
+		Name: Name,
+		URL:  URL,
+	}
 }
