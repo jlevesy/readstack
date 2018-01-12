@@ -16,14 +16,14 @@ const (
 )
 
 type invalidParam struct {
-	Name   string
-	Reason string
+	Name   string `json:"name"`
+	Reason string `json:"reason"`
 }
 
 type apiError struct {
-	Type          string
-	Title         string
-	InvalidParams []*invalidParam
+	Type          string          `json:"type"`
+	Title         string          `json:"title"`
+	InvalidParams []*invalidParam `json:"invalid-params,omitempty"`
 }
 
 func HandleError(w http.ResponseWriter, err error) {
