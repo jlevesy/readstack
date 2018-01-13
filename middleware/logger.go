@@ -1,12 +1,15 @@
 package middleware
 
 import (
-	"log"
 	"net/http"
 
+	"github.com/jlevesy/readstack/logger"
 	"github.com/jlevesy/readstack/timing"
 )
 
+// statusCodeCollector is a structure satisfying http.ResponseWriter
+// It is injected by this middleware in order to capture the returned
+// status code.
 type statusCodeCollector struct {
 	http.ResponseWriter
 	StatusCode int
@@ -17,16 +20,20 @@ func (s *statusCodeCollector) WriteHeader(statusCode int) {
 	s.StatusCode = statusCode
 }
 
-func RequestLogger(next http.Handler) http.Handler {
+// RequestLogger is a middleware dedicated to log incoming and processed requests
+// It currently logs status code, and timer thanks to the timing package.
+// However it requires to be used under a middleware injecting a timing.Recorder into
+// the request context.
+func RequestLogger(logger logger.Logger, next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			log.Printf("%s %s", r.Method, r.URL.Path)
+			logger.Info("%s %s", r.Method, r.URL.Path)
 
 			s := statusCodeCollector{ResponseWriter: w}
 
 			next.ServeHTTP(&s, r)
 
-			log.Printf(
+			logger.Info(
 				"%s %s, Status %d, Duration %v",
 				r.Method,
 				r.URL.Path,

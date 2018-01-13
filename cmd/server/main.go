@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/jlevesy/envconfig"
 
+	rsLogger "github.com/jlevesy/readstack/logger"
 	"github.com/jlevesy/readstack/middleware"
 	"github.com/jlevesy/readstack/repository/postgres"
 
@@ -16,8 +18,9 @@ import (
 )
 
 const (
-	readstackAppName = "READSTACK"
-	defaultSeparator = "_"
+	readstackAppName = "Readstack"
+
+	envSeparator = "_"
 )
 
 type config struct {
@@ -37,15 +40,23 @@ const (
 )
 
 func main() {
-	log.Println("Starting the server...")
+	logger := rsLogger.NewStdLogger(
+		log.New(
+			os.Stdout,
+			readstackAppName,
+			log.Ldate|log.Ltime|log.Lshortfile,
+		),
+	)
+
+	logger.Info("Starting the server...")
 
 	config := config{defaultPostgresURL, defaultListenHost, defaultListenPort, defaultHandlerTimemout, defaultWebAssetsPath}
 
-	if err := envconfig.New(readstackAppName, defaultSeparator).Load(&config); err != nil {
+	if err := envconfig.New(readstackAppName, envSeparator).Load(&config); err != nil {
 		log.Fatal(err)
 	}
 
-	log.Printf("Loaded config %v", config)
+	logger.Info("Loaded config %v", config)
 
 	itemRepository, err := postgres.NewItemRepository(config.PostgresURL)
 
@@ -72,6 +83,7 @@ func main() {
 			middleware.Timeout(
 				config.HandlerTimeout,
 				middleware.RequestLogger(
+					logger,
 					middleware.RecordDuration(
 						middleware.HandlerDuration,
 						r,
@@ -81,5 +93,5 @@ func main() {
 		),
 	}
 
-	log.Fatal(server.ListenAndServe())
+	logger.Fatal("%s", server.ListenAndServe())
 }
