@@ -3,6 +3,7 @@ package index
 import (
 	"context"
 	"errors"
+	"reflect"
 	"testing"
 
 	"github.com/jlevesy/readstack/model"
@@ -10,62 +11,54 @@ import (
 	"github.com/jlevesy/readstack/test/stub/repository"
 )
 
-func TestIndexHandler(t *testing.T) {
-	cases := []struct {
-		Name           string
-		OnFindAll      func(context.Context) ([]*model.Item, error)
-		ShouldFail     bool
-		ExpectedLength int
-	}{
-		{
-			"itShouldReturnResults",
-			func(context.Context) ([]*model.Item, error) {
-				return []*model.Item{
-					model.NewItem("foo", "bar"),
-					model.NewItem("foo", "bar"),
-					model.NewItem("foo", "bar"),
-				}, nil
-			},
-			false,
-			3,
-		},
-		{
-			"itShouldForwardFailure",
-			func(context.Context) ([]*model.Item, error) {
-				return []*model.Item{}, errors.New("YOLO")
-			},
-			true,
-			0,
+func TestItShouldReturnAllResults(t *testing.T) {
+	dbResults := []*model.Item{
+		model.NewItem("foo", "bar"),
+		model.NewItem("foo", "bar"),
+		model.NewItem("foo", "bar"),
+	}
+
+	mockRepository := &repository.ItemRepositoryStub{
+		OnFindAll: func(context.Context) ([]*model.Item, error) {
+			return dbResults, nil
 		},
 	}
 
-	for _, testCase := range cases {
-		t.Run(testCase.Name, func(t *testing.T) {
-			mockRepository := repository.ItemRepositoryStub{
-				OnFindAll: testCase.OnFindAll,
-			}
+	subject := NewHandler(mockRepository)
 
-			subject := NewHandler(&mockRepository)
+	res, err := subject.Handle(context.Background())
 
-			res, err := subject.Handle(context.Background())
-
-			if testCase.ShouldFail {
-				if err == nil {
-					t.Fatal("Expected an error, got nothing")
-				}
-
-				return
-			}
-
-			if err != nil {
-				t.Fatalf("Expected no error, got %v", err)
-			}
-
-			if len(res.Items) != testCase.ExpectedLength {
-				t.Fatalf("Expected %d, got %d", testCase.ExpectedLength, len(res.Items))
-			}
-
-		})
+	if err != nil {
+		t.Fatalf("Expected no error, got %s", err)
 	}
 
+	if !reflect.DeepEqual(res.Items, dbResults) {
+		t.Fatalf("Expected returned results to be deep equals")
+	}
+}
+
+func TestItForwardsARepositoryError(t *testing.T) {
+	returnedErr := errors.New("Failed to reach database.")
+
+	mockRepository := &repository.ItemRepositoryStub{
+		OnFindAll: func(context.Context) ([]*model.Item, error) {
+			return []*model.Item{}, returnedErr
+		},
+	}
+
+	subject := NewHandler(mockRepository)
+
+	res, err := subject.Handle(context.Background())
+
+	if err == nil {
+		t.Fatal("Expected an error, got nothng")
+	}
+
+	if res != nil {
+		t.Fatalf("Expected no response, got %v", res)
+	}
+
+	if err != returnedErr {
+		t.Fatalf("Expected an error %s, got %s", err, returnedErr)
+	}
 }
