@@ -7,5 +7,5 @@ import (
 // Response is an index.Handler result
 // It carries all model.Item found by the handler
 type Response struct {
-	Items []*model.Item
+	Items []*model.Item `json:"items"`
 }
