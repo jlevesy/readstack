@@ -1,7 +1,7 @@
-all: build
+all: create_dist build web
 
 .PHONY: build
-build: create_dist vendor
+build: vendor
 	@go build -o dist/server cmd/server/main.go
 
 .PHONY: test
@@ -17,6 +17,17 @@ integration_test:
 unit_test:
 	@echo "Running unit tests..."
 	@go test -race -cover -timeout=5s -run=$(T) -v `go list ./... | grep -v integration`
+
+.PHONY: clean_web
+clean_web:
+	@rm -rf dist/web
+
+.PHONY: web
+web: clean_web
+	@echo "Building web appication"
+	@mkdir -p dist/web
+	@cp -r web/* dist/web
+	@echo "Done !"
 
 .PHONY: run_dev
 run_dev:

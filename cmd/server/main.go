@@ -68,10 +68,10 @@ func main() {
 
 	r := mux.NewRouter()
 
-	r.Path("/").Handler(http.FileServer(http.Dir(config.WebAssetsPath)))
-
 	apiV1 := r.PathPrefix("/api/v1").Subrouter()
 	item.MountRoutes(apiV1, itemRepository)
+
+	r.PathPrefix("/").Handler(http.FileServer(http.Dir(config.WebAssetsPath)))
 
 	server := http.Server{
 		ReadTimeout:       time.Second,
