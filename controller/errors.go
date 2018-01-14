@@ -75,8 +75,8 @@ func handleValidationError(w http.ResponseWriter, err *readstackError.Validation
 }
 
 func handleError(w http.ResponseWriter, err *apiError, statusCode int) {
-	json.NewEncoder(w).Encode(err)
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	w.WriteHeader(statusCode)
+	json.NewEncoder(w).Encode(err)
 }

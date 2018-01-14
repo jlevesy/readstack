@@ -24,10 +24,10 @@ func (i *indexController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
+
 	if err := json.NewEncoder(w).Encode(res); err != nil {
 		controller.HandleError(w, err)
 		return
 	}
-
-	w.Header().Set("Content-Type", "application/json")
 }
