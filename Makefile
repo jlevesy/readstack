@@ -22,13 +22,6 @@ unit_test:
 clean_web:
 	@rm -rf dist/web
 
-.PHONY: web
-web: clean_web
-	@echo "Building web appication"
-	@mkdir -p dist/web
-	@cp -r web/* dist/web
-	@echo "Done !"
-
 .PHONY: run_dev
 run_dev:
 	@docker-compose up
