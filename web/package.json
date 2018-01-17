@@ -1,0 +1,11 @@
+{
+  "name": "readstack",
+  "version": "1.0.0",
+  "description": "Store the things you want to read easily",
+  "main": "src/index.js",
+  "repository": "https://github.com/jlevesy/readstack",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^3.10.0"
+  }
+}
