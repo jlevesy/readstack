@@ -43,8 +43,8 @@ func main() {
 	logger := rsLogger.NewStdLogger(
 		log.New(
 			os.Stdout,
-			readstackAppName,
-			log.Ldate|log.Ltime|log.Lshortfile,
+			"",
+			log.Ldate|log.Ltime,
 		),
 	)
 
