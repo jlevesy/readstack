@@ -8,6 +8,23 @@ volumes:
     db:
 
 services:
+  front:
+    image: node:alpine
+    volumes:
+      - ${PWD}/web:/home/node/app
+    working_dir: /home/node/app
+    environment:
+      - READSTACK_BACKEND_URL=http://app:8080
+    ports:
+      - 8081:8081
+    command:
+      - yarn
+      - container-start
+    depends_on:
+      - app
+    networks:
+      - dev
+
   app:
     image: golang:alpine
     working_dir: /go/src/github.com/jlevesy/readstack

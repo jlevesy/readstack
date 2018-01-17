@@ -1,0 +1,19 @@
+{
+  "name": "readstack",
+  "version": "1.0.0",
+  "description": "Store the things you want to read easily",
+  "main": "src/index.js",
+  "repository": "https://github.com/jlevesy/readstack",
+  "license": "MIT",
+  "devDependencies": {
+    "clean-webpack-plugin": "^0.1.17",
+    "html-webpack-plugin": "^2.30.1",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.11.0"
+  },
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server",
+    "container-start": "yarn install && webpack-dev-server"
+  }
+}
