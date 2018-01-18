@@ -1,4 +1,8 @@
-all: create_dist build web
+all: create_dist build
+
+.PHONY: static_build
+static_build: vendor
+	@CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags -static' -o dist/server cmd/server/main.go
 
 .PHONY: build
 build: vendor
@@ -6,6 +10,10 @@ build: vendor
 
 .PHONY: test
 test: unit_test integration_test
+
+.PHONY: vendor
+vendor:
+	@dep ensure
 
 .PHONY: integration_test
 integration_test:
@@ -41,10 +49,6 @@ new_migration:
 .PHONY: create_dist
 create_dist:
 	@mkdir -p dist
-
-.PHONY: vendor
-vendor:
-	@dep ensure
 
 .PHONY: clean
 clean:
