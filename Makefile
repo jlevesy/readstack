@@ -24,7 +24,7 @@ integration_test:
 .PHONY: unit_test
 unit_test:
 	@echo "Running unit tests..."
-	@go test -race -cover -timeout=5s -run=$(T) `go list ./... | grep -v integration`
+	@go test -race -cover -timeout=5s -run=$(T) `go list ./... | grep -v test`
 
 .PHONY: clean_web
 clean_web:
