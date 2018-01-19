@@ -2,10 +2,10 @@ package create
 
 import (
 	"context"
-	"errors"
+	stdErrors "errors"
 	"testing"
 
-	rsError "github.com/jlevesy/readstack/error"
+	"github.com/jlevesy/readstack/handler/errors"
 	"github.com/jlevesy/readstack/model"
 
 	"github.com/jlevesy/readstack/test/stub/repository"
@@ -22,8 +22,8 @@ func TestItCreatesAndSavesAnItem(t *testing.T) {
 		},
 	}
 
-	validator := func(r *Request) []*rsError.Violation {
-		return []*rsError.Violation{}
+	validator := func(r *Request) []*errors.Violation {
+		return []*errors.Violation{}
 	}
 
 	subject := NewHandler(validator, &mockRepository)
@@ -54,8 +54,8 @@ func TestItReportsAValdationError(t *testing.T) {
 		},
 	}
 
-	validator := func(r *Request) []*rsError.Violation {
-		return []*rsError.Violation{
+	validator := func(r *Request) []*errors.Violation {
+		return []*errors.Violation{
 			{
 				Name:   "Foo",
 				Reason: "Bar",
@@ -71,14 +71,14 @@ func TestItReportsAValdationError(t *testing.T) {
 		t.Fatal("Expected an error, got nothing")
 	}
 
-	if _, ok := err.(*rsError.ValidationError); !ok {
+	if _, ok := err.(*errors.ValidationError); !ok {
 		t.Fatalf("Expected a validator error, got %T", err)
 	}
 }
 
 func TestItReportsARepositoryError(t *testing.T) {
 	request := NewRequest("Name", "https://name.com")
-	returnedErr := errors.New("Failed to lalala the database")
+	returnedErr := stdErrors.New("Failed to lalala the database")
 
 	mockRepository := repository.ItemRepositoryStub{
 		OnSave: func(ctx context.Context, i *model.Item) error {
@@ -86,8 +86,8 @@ func TestItReportsARepositoryError(t *testing.T) {
 		},
 	}
 
-	validator := func(r *Request) []*rsError.Violation {
-		return []*rsError.Violation{}
+	validator := func(r *Request) []*errors.Violation {
+		return []*errors.Violation{}
 	}
 
 	subject := NewHandler(validator, &mockRepository)

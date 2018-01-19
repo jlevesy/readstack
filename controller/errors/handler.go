@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	readstackError "github.com/jlevesy/readstack/error"
+	"github.com/jlevesy/readstack/handler/errors"
 	"github.com/jlevesy/readstack/logger"
 )
 
@@ -55,7 +55,7 @@ func (h *httpErrorHandler) HandleHttpError(w http.ResponseWriter, err error) {
 			},
 			http.StatusUnprocessableEntity,
 		)
-	case *readstackError.ValidationError:
+	case *errors.ValidationError:
 		handleValidationError(w, v, http.StatusBadRequest)
 	default:
 		handleError(
@@ -69,7 +69,7 @@ func (h *httpErrorHandler) HandleHttpError(w http.ResponseWriter, err error) {
 	}
 }
 
-func handleValidationError(w http.ResponseWriter, err *readstackError.ValidationError, statusCode int) {
+func handleValidationError(w http.ResponseWriter, err *errors.ValidationError, statusCode int) {
 	invalidParams := make([]*invalidParam, len(err.Violations))
 
 	for i, v := range err.Violations {
