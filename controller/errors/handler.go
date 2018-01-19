@@ -1,18 +1,20 @@
-package controller
+package errors
 
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	readstackError "github.com/jlevesy/readstack/error"
+	"github.com/jlevesy/readstack/logger"
 )
 
 const (
 	validationErrorType     = "urn:api:readstack:error:validation-error"
 	jsonErrorType           = "urn:api:readstack:error:json-error"
 	internalServerErrorType = "urn:api:readstack:error:internal-server-error"
+
+	errorDefaultMessage = "Something went terribly wrong"
 )
 
 type invalidParam struct {
@@ -26,8 +28,22 @@ type apiError struct {
 	InvalidParams []*invalidParam `json:"invalid-params,omitempty"`
 }
 
-func HandleError(w http.ResponseWriter, err error) {
-	log.Printf("Handler error: [%T] %s", err, err.Error())
+// HttpErrorHandler defines an interface to handle errors at controller level
+type HttpErrorHandler interface {
+	HandleHttpError(w http.ResponseWriter, err error)
+}
+
+type httpErrorHandler struct {
+	logger logger.Logger
+}
+
+// NewHttpErrorHandler returns an HttpErrorHandler
+func NewHttpErrorHandler(logger logger.Logger) HttpErrorHandler {
+	return &httpErrorHandler{logger}
+}
+
+func (h *httpErrorHandler) HandleHttpError(w http.ResponseWriter, err error) {
+	h.logger.Error("Handler error: [%T] %s", err, err.Error())
 
 	switch v := err.(type) {
 	case *json.SyntaxError:
@@ -46,7 +62,7 @@ func HandleError(w http.ResponseWriter, err error) {
 			w,
 			&apiError{
 				Type:  internalServerErrorType,
-				Title: "Something went terribly wrong.",
+				Title: errorDefaultMessage,
 			},
 			http.StatusInternalServerError,
 		)

@@ -4,16 +4,17 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/jlevesy/readstack/controller"
+	"github.com/jlevesy/readstack/controller/errors"
 	"github.com/jlevesy/readstack/handler/item/create"
 )
 
 type createController struct {
-	handler create.Handler
+	handler    create.Handler
+	errHandler errors.HttpErrorHandler
 }
 
-func NewCreateController(handler create.Handler) http.Handler {
-	return &createController{handler}
+func NewCreateController(handler create.Handler, errHandler errors.HttpErrorHandler) http.Handler {
+	return &createController{handler, errHandler}
 }
 
 func (c *createController) ServeHTTP(w http.ResponseWriter, httpReq *http.Request) {
@@ -22,12 +23,12 @@ func (c *createController) ServeHTTP(w http.ResponseWriter, httpReq *http.Reques
 	var req create.Request
 
 	if err := json.NewDecoder(httpReq.Body).Decode(&req); err != nil {
-		controller.HandleError(w, err)
+		c.errHandler.HandleHttpError(w, err)
 		return
 	}
 
 	if err := c.handler.Handle(httpReq.Context(), &req); err != nil {
-		controller.HandleError(w, err)
+		c.errHandler.HandleHttpError(w, err)
 		return
 	}
 
