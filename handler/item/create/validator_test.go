@@ -4,21 +4,21 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/jlevesy/readstack/error"
+	"github.com/jlevesy/readstack/handler/errors"
 )
 
 func TestValidator(t *testing.T) {
 	cases := []struct {
 		Input        *Request
-		Expectations []*error.Violation
+		Expectations []*errors.Violation
 	}{
 		{
 			Input:        NewRequest("Foo", "https://foo.bar.com"),
-			Expectations: []*error.Violation{},
+			Expectations: []*errors.Violation{},
 		},
 		{
 			Input: NewRequest("", "https://foo.bar.com"),
-			Expectations: []*error.Violation{
+			Expectations: []*errors.Violation{
 				{
 					Name:   "Name",
 					Reason: "Should not be blank",
@@ -27,7 +27,7 @@ func TestValidator(t *testing.T) {
 		},
 		{
 			Input: NewRequest("Bar", ""),
-			Expectations: []*error.Violation{
+			Expectations: []*errors.Violation{
 				{
 					Name:   "URL",
 					Reason: "Should not be blank",

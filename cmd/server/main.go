@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/jlevesy/envconfig"
 
+	"github.com/jlevesy/readstack/controller/errors"
 	rsLogger "github.com/jlevesy/readstack/logger"
 	"github.com/jlevesy/readstack/middleware"
 	"github.com/jlevesy/readstack/repository/postgres"
@@ -66,10 +67,12 @@ func main() {
 
 	defer itemRepository.Close()
 
+	errorHandler := errors.NewHttpErrorHandler(logger)
+
 	r := mux.NewRouter()
 
 	apiV1 := r.PathPrefix("/api/v1").Subrouter()
-	item.MountRoutes(apiV1, itemRepository)
+	item.MountRoutes(apiV1, itemRepository, errorHandler)
 
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir(config.WebAssetsPath)))
 
