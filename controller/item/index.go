@@ -28,8 +28,7 @@ func (i *indexController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		i.errHandler.HandleHTTPError(w, err)
-		return
-	}
+	json.NewEncoder(w).Encode(res)
+
+	w.WriteHeader(http.StatusOK)
 }
