@@ -9,7 +9,8 @@ import (
 	"github.com/jlevesy/readstack/repository"
 )
 
-func MountRoutes(router *mux.Router, itemRepository repository.ItemRepository, errorHandler errors.HttpErrorHandler) {
+// MountRoutes map item related controllers to given router
+func MountRoutes(router *mux.Router, itemRepository repository.ItemRepository, errorHandler errors.HTTPErrorHandler) {
 	router.Path("/item").Methods("POST").Handler(
 		NewCreateController(
 			createItem.NewHandler(

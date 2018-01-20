@@ -28,21 +28,21 @@ type apiError struct {
 	InvalidParams []*invalidParam `json:"invalid-params,omitempty"`
 }
 
-// HttpErrorHandler defines an interface to handle errors at controller level
-type HttpErrorHandler interface {
-	HandleHttpError(w http.ResponseWriter, err error)
+// HTTPErrorHandler defines an interface to handle errors at controller level
+type HTTPErrorHandler interface {
+	HandleHTTPError(w http.ResponseWriter, err error)
 }
 
 type httpErrorHandler struct {
 	logger logger.Logger
 }
 
-// NewHttpErrorHandler returns an HttpErrorHandler
-func NewHttpErrorHandler(logger logger.Logger) HttpErrorHandler {
+// NewHTTPErrorHandler returns an HTTPErrorHandler
+func NewHTTPErrorHandler(logger logger.Logger) HTTPErrorHandler {
 	return &httpErrorHandler{logger}
 }
 
-func (h *httpErrorHandler) HandleHttpError(w http.ResponseWriter, err error) {
+func (h *httpErrorHandler) HandleHTTPError(w http.ResponseWriter, err error) {
 	h.logger.Error("Handler error: [%T] %s", err, err.Error())
 
 	switch v := err.(type) {

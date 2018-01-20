@@ -40,7 +40,7 @@ func TestItCanHandleErrors(t *testing.T) {
 		{
 			"WithValidationError",
 			&handlerErrors.ValidationError{
-				[]*handlerErrors.Violation{
+				Violations: []*handlerErrors.Violation{
 					{
 						Name:   "Foo",
 						Reason: "Bar",
@@ -63,10 +63,10 @@ func TestItCanHandleErrors(t *testing.T) {
 					loggerCalledCount++
 				},
 			}
-			handler := NewHttpErrorHandler(&logger)
+			handler := NewHTTPErrorHandler(&logger)
 			resWriter := httptest.NewRecorder()
 
-			handler.HandleHttpError(resWriter, testCase.Err)
+			handler.HandleHTTPError(resWriter, testCase.Err)
 
 			if loggerCalledCount != 1 {
 				t.Fatalf("Expected 1 call to logger, got %d", loggerCalledCount)
