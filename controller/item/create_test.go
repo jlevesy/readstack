@@ -20,8 +20,8 @@ func TestItShouldHandleErrorOnDecodeError(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	errorCalledCount := 0
-	errorHandler := errorsStub.HTTPErrorHandlerStub{
-		OnHandleHTTPError: func(w http.ResponseWriter, err error) {
+	errorHandler := errorsStub.HandlerStub{
+		OnHandle: func(w http.ResponseWriter, err error) {
 			errorCalledCount++
 		},
 	}
@@ -58,8 +58,8 @@ func TestItShouldHandleHandlerError(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	errorCalledCount := 0
-	errorHandler := errorsStub.HTTPErrorHandlerStub{
-		OnHandleHTTPError: func(w http.ResponseWriter, err error) {
+	errorHandler := errorsStub.HandlerStub{
+		OnHandle: func(w http.ResponseWriter, err error) {
 			errorCalledCount++
 		},
 	}
@@ -96,8 +96,8 @@ func TestItShouldSetStatusCreatedOnSuccess(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	errorCalledCount := 0
-	errorHandler := errorsStub.HTTPErrorHandlerStub{
-		OnHandleHTTPError: func(w http.ResponseWriter, err error) {
+	errorHandler := errorsStub.HandlerStub{
+		OnHandle: func(w http.ResponseWriter, err error) {
 			errorCalledCount++
 		},
 	}

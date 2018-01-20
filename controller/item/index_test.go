@@ -21,8 +21,8 @@ func TestItShouldHandleIndexHandlerError(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	errorCalledCount := 0
-	errorHandler := errorsStub.HTTPErrorHandlerStub{
-		OnHandleHTTPError: func(w http.ResponseWriter, err error) {
+	errorHandler := errorsStub.HandlerStub{
+		OnHandle: func(w http.ResponseWriter, err error) {
 			errorCalledCount++
 		},
 	}
@@ -53,8 +53,8 @@ func TestItShouldReturnIndexHandlerResponse(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	errorCalledCount := 0
-	errorHandler := errorsStub.HTTPErrorHandlerStub{
-		OnHandleHTTPError: func(w http.ResponseWriter, err error) {
+	errorHandler := errorsStub.HandlerStub{
+		OnHandle: func(w http.ResponseWriter, err error) {
 			errorCalledCount++
 		},
 	}

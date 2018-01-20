@@ -10,7 +10,7 @@ import (
 )
 
 // MountRoutes map item related controllers to given router
-func MountRoutes(router *mux.Router, itemRepository repository.ItemRepository, errorHandler errors.HTTPErrorHandler) {
+func MountRoutes(router *mux.Router, itemRepository repository.ItemRepository, errorHandler errors.Handler) {
 	router.Path("/item").Methods("POST").Handler(
 		NewCreateController(
 			createItem.NewHandler(

@@ -10,11 +10,11 @@ import (
 
 type indexController struct {
 	handler    index.Handler
-	errHandler errors.HTTPErrorHandler
+	errHandler errors.Handler
 }
 
 // NewIndexController returns an instance of an indexController as an http.Handler
-func NewIndexController(handler index.Handler, errHandler errors.HTTPErrorHandler) http.Handler {
+func NewIndexController(handler index.Handler, errHandler errors.Handler) http.Handler {
 	return &indexController{handler, errHandler}
 }
 
@@ -22,13 +22,11 @@ func (i *indexController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	res, err := i.handler.Handle(r.Context())
 
 	if err != nil {
-		i.errHandler.HandleHTTPError(w, err)
+		i.errHandler.Handle(w, err)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-
 	json.NewEncoder(w).Encode(res)
-
 	w.WriteHeader(http.StatusOK)
 }

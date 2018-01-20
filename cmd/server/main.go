@@ -67,7 +67,7 @@ func main() {
 
 	defer itemRepository.Close()
 
-	errorHandler := errors.NewHTTPErrorHandler(logger)
+	errorHandler := errors.NewHandler(logger)
 
 	r := mux.NewRouter()
 

@@ -10,11 +10,11 @@ import (
 
 type createController struct {
 	handler    create.Handler
-	errHandler errors.HTTPErrorHandler
+	errHandler errors.Handler
 }
 
 // NewCreateController returns an instance of a createController as http.Handler
-func NewCreateController(handler create.Handler, errHandler errors.HTTPErrorHandler) http.Handler {
+func NewCreateController(handler create.Handler, errHandler errors.Handler) http.Handler {
 	return &createController{handler, errHandler}
 }
 
@@ -24,12 +24,12 @@ func (c *createController) ServeHTTP(w http.ResponseWriter, httpReq *http.Reques
 	var req create.Request
 
 	if err := json.NewDecoder(httpReq.Body).Decode(&req); err != nil {
-		c.errHandler.HandleHTTPError(w, err)
+		c.errHandler.Handle(w, err)
 		return
 	}
 
 	if err := c.handler.Handle(httpReq.Context(), &req); err != nil {
-		c.errHandler.HandleHTTPError(w, err)
+		c.errHandler.Handle(w, err)
 		return
 	}
 

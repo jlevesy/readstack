@@ -63,10 +63,10 @@ func TestItCanHandleErrors(t *testing.T) {
 					loggerCalledCount++
 				},
 			}
-			handler := NewHTTPErrorHandler(&logger)
+			handler := NewHandler(&logger)
 			resWriter := httptest.NewRecorder()
 
-			handler.HandleHTTPError(resWriter, testCase.Err)
+			handler.Handle(resWriter, testCase.Err)
 
 			if loggerCalledCount != 1 {
 				t.Fatalf("Expected 1 call to logger, got %d", loggerCalledCount)
