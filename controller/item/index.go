@@ -27,6 +27,6 @@ func (i *indexController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(res)
 	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(res)
 }
