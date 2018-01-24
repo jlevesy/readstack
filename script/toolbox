@@ -1,0 +1,11 @@
+#! /bin/sh
+docker build \
+    --build-arg UID=$(id -u) \
+    --build-arg GID=$(id -g) \
+    -t readstack-toolbox \
+    toolbox
+docker run -ti --rm \
+    -w /go/src/github.com/jlevesy/readstack \
+    -v ${PWD}:/go/src/github.com/jlevesy/readstack \
+    --network readstack_dev \
+    readstack-toolbox $@
