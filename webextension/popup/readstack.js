@@ -1,22 +1,8 @@
-function renderClientError(error) {
-    const errElement = document.createElement('p')
+function renderError(message) {
+    const errElement = document.createElement('p');
 
     errElement.appendChild(
-        document.createTextNode(
-            `Failed to communicate with the server : ${error}`
-        )
-    );
-
-    return errElement;
-}
-
-function renderServerError(error) {
-    const errElement = document.createElement('p')
-
-    errElement.appendChild(
-        document.createTextNode(
-            `Server returned an error : ${error.title}`
-        )
+        document.createTextNode(message)
     );
 
     return errElement;
@@ -50,19 +36,37 @@ function clear(node) {
     }
 }
 
+const defaultHost = 'http://localhost:8080/';
 const container = document.getElementById('container');
 
-fetch('http://localhost:8080/api/v1/item').then((response) => {
-    clear(container)
-    response.json().then((data) => {
-        if (!response.ok) {
-            container.appendChild(renderServerError(data));
-            return
-        }
+browser.storage.local.get('readstack-options').then((res) => {
+    let host = defaultHost;
 
-        container.appendChild(renderItems(data.items));
+    if (res['readstack-options']) {
+        host = res['readstack-options']['host'] || defaultHost;
+    }
+
+    fetch(`${host}api/v1/item`).then((response) => {
+        clear(container)
+        response.json().then((data) => {
+            if (!response.ok) {
+                container.appendChild(
+                    renderError(data['message'])
+                );
+                return
+            }
+
+            container.appendChild(renderItems(data.items));
+        }).catch((e) => {
+            clear(container);
+            container.appendChild(
+                renderError(`Failed to decode JSON response ${e}`)
+            );
+        });
+    }).catch((e) => {
+        clear(container);
+        container.appendChild(
+            renderError(`Failed to perform request ${e}`)
+        );
     });
-}).catch((e) => {
-    clear(container);
-    container.appendChild(renderClientError(e));
 });
