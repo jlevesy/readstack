@@ -11,7 +11,8 @@
   },
 
   "permissions": [
-    "activeTab"
+    "tabs",
+    "<all_urls>"
   ],
 
   "browser_action": {
