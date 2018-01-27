@@ -46,6 +46,11 @@ browser.storage.local.get('readstack-options').then((res) => {
         host = res['readstack-options']['host'] || defaultHost;
     }
 
+    document.getElementById('options').addEventListener('click', (e) => {
+        e.preventDefault();
+        browser.runtime.openOptionsPage();
+    });
+
     fetch(`${host}api/v1/item`).then((response) => {
         clear(container)
         response.json().then((data) => {
