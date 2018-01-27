@@ -35,13 +35,26 @@ function renderItems(items) {
     return list;
 }
 
+function clear(node) {
+    while (node.hasChildNodes()) {
+        node.removeChild(node.lastChild);
+    }
+}
+
+const container = document.getElementById('container');
+
 fetch('http://localhost:8080/api/v1/item').then((response) => {
+    clear(container)
+
     if (!response.ok) {
         handleError(response);
         return
     }
 
     response.json().then((data) => {
-        document.body.appendChild(renderItems(data.items));
+        container.appendChild(renderItems(data.items));
     });
-}).catch(handleClientError);
+}).catch((e) => {
+    clear(container);
+    handleClientError(e);
+});
