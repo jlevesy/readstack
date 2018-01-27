@@ -1,11 +1,25 @@
-function handleClientError(error) {
-    // TODO
-    console.log(error);
+function renderClientError(error) {
+    const errElement = document.createElement('p')
+
+    errElement.appendChild(
+        document.createTextNode(
+            `Failed to communicate with the server : ${error}`
+        )
+    );
+
+    return errElement;
 }
 
-function handleServerError(response) {
-    // TODO
-    console.log(response);
+function renderServerError(error) {
+    const errElement = document.createElement('p')
+
+    errElement.appendChild(
+        document.createTextNode(
+            `Server returned an error : ${error.title}`
+        )
+    );
+
+    return errElement;
 }
 
 function renderItem(item) {
@@ -14,12 +28,7 @@ function renderItem(item) {
     entry.appendChild(document.createTextNode(item.name));
     entry.addEventListener('click', (e) => {
         e.preventDefault();
-        browser.tabs.create(
-            {
-                url: item.url,
-                active: false
-            }
-        );
+        browser.tabs.create({ url: item.url, active: false});
     });
 
     return entry;
@@ -45,16 +54,15 @@ const container = document.getElementById('container');
 
 fetch('http://localhost:8080/api/v1/item').then((response) => {
     clear(container)
-
-    if (!response.ok) {
-        handleError(response);
-        return
-    }
-
     response.json().then((data) => {
+        if (!response.ok) {
+            container.appendChild(renderServerError(data));
+            return
+        }
+
         container.appendChild(renderItems(data.items));
     });
 }).catch((e) => {
     clear(container);
-    handleClientError(e);
+    container.appendChild(renderClientError(e));
 });
