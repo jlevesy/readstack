@@ -14,6 +14,7 @@ RUN apk add --update \
     go get -u -d github.com/mattes/migrate/cli github.com/lib/pq && \
     go build -tags 'postgres' -o /usr/local/bin/migrate github.com/mattes/migrate/cli && \
     go get -u github.com/golang/dep/cmd/dep && \
+    yarn global add web-ext && \
     adduser -D -u ${UID} readstack-developer && \
     chown -R readstack-developer /go
 
