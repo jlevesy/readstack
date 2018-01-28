@@ -5,19 +5,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 document.getElementById("readstack-options").addEventListener("submit", (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    value = document.getElementById('readstack-host').value
+  value = document.getElementById('readstack-host').value
 
-    try {
-        url = new URL(value);
-    } catch(_) {
-        return;
-    }
+  try {
+    url = new URL(value);
+  } catch(_) {
+    return;
+  }
 
-    readstackOptions = {
-        host: url.href
-    };
+  readstackOptions = {
+    host: url.href
+  };
 
-    browser.storage.local.set({'readstack-options': readstackOptions}).catch((err) => console.log(err));
+  browser.storage.local.set({'readstack-options': readstackOptions}).catch((err) => console.log(err));
 });
