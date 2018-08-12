@@ -1,7 +1,5 @@
 #! /bin/sh
-docker network create readstack_dev
-
-docker run
+docker run \
     -ti \
      --rm \
     -w /go/src/github.com/jlevesy/readstack \
