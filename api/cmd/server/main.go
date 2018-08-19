@@ -1,17 +1,11 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
 	"github.com/jlevesy/envconfig"
-	_ "github.com/lib/pq"
-
-	"github.com/jlevesy/readstack/backend/item"
 )
 
 const (
@@ -39,7 +33,7 @@ const (
 func main() {
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	logger.Info("Starting the server...")
+	logger.Println("Starting the server...")
 
 	config := config{defaultPostgresURL, defaultListenHost, defaultListenPort, defaultHandlerTimemout, defaultWebAssetsPath}
 
@@ -47,19 +41,5 @@ func main() {
 		log.Fatal(err)
 	}
 
-	logger.Info("Loaded config %v", config)
-
-	db, err := sql.Open("postgres", config.PostgresURL)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer db.Close()
-
-	itemRepository, err := item.NewSQLRepository(db)
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	logger.Printf("Loaded config %v", config)
 }
