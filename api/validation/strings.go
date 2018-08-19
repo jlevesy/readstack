@@ -2,17 +2,15 @@ package validation
 
 import (
 	"strings"
-
-	"github.com/jlevesy/readstack/handler/errors"
 )
 
 const (
 	reasonNotBlank = "Should not be blank"
 )
 
-func RequireNotBlank(attributeName, value string) *errors.Violation {
+func RequireNotBlank(attributeName, value string) *Violation {
 	if strings.TrimSpace(value) == "" {
-		return &errors.Violation{
+		return &Violation{
 			Name:   attributeName,
 			Reason: reasonNotBlank,
 		}

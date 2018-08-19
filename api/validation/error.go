@@ -1,4 +1,4 @@
-package errors
+package validation
 
 import (
 	"fmt"
@@ -16,18 +16,18 @@ func (v *Violation) Error() string {
 	return fmt.Sprintf("%s : %s", v.Name, v.Reason)
 }
 
-// ValidationError is an error raised when a query fails to Validate.
+// Error is an error raised when a query fails to Validate.
 // It is composed by violations
-type ValidationError struct {
+type Error struct {
 	Violations []*Violation
 }
 
-// NewValidationError returns a ValidationError
-func NewValidationError(violations []*Violation) *ValidationError {
-	return &ValidationError{violations}
+// NewError returns a ValidationError
+func NewError(violations []*Violation) *Error {
+	return &Error{violations}
 }
 
-func (v *ValidationError) Error() string {
+func (v *Error) Error() string {
 	msgs := make([]string, len(v.Violations))
 
 	for i, err := range v.Violations {

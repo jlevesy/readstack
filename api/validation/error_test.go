@@ -1,12 +1,11 @@
-package errors
+package validation
 
 import (
 	"testing"
 )
 
 func TestItCanBeSerializedAsAString(t *testing.T) {
-
-	v := NewValidationError(
+	v := NewError(
 		[]*Violation{
 			{Name: "Foo", Reason: "Bar"},
 			{Name: "Foo", Reason: "Bar"},
