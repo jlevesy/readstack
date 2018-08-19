@@ -18,13 +18,12 @@ vendor:
 .PHONY: integration_test
 integration_test:
 	@echo "Running integration tests..."
-	# @go test -v -race -timeout=10m -run=$(T) ./integration
-	@echo "TODO..."
+	@go test -v -race -timeout=10m -run=$(T) ./integration
 
 .PHONY: unit_test
 unit_test:
 	@echo "Running unit tests..."
-	@go test -race -cover -timeout=5s -run=$(T) `go list ./... | grep -v test`
+	@go test -race -cover -timeout=5s -run=$(T) `go list ./... | grep -v integration`
 
 .PHONY: migate_up
 migrate_up:

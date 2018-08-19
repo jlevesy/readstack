@@ -1,21 +1,21 @@
-package item
+package integration
 
 import (
 	"context"
 	"reflect"
 	"testing"
 
-	"github.com/jlevesy/readstack/api/test"
+	"github.com/jlevesy/readstack/api/item"
 )
 
-func setup() (Repository, func(), error) {
-	db, done, err := test.SetupDB()
+func setup() (item.Repository, func(), error) {
+	db, done, err := SetupDB()
 
 	if err != nil {
 		return nil, nil, err
 	}
 
-	repo, err := NewSQLRepository(db)
+	repo, err := item.NewSQLRepository(db)
 
 	if err != nil {
 		return nil, nil, err
@@ -33,7 +33,7 @@ func TestRepository(t *testing.T) {
 
 	defer done()
 
-	originalItem := New("foo", "https://foo.bar.com")
+	originalItem := item.New("foo", "https://foo.bar.com")
 
 	if err := repo.Create(context.Background(), originalItem); err != nil {
 		t.Fatal(err)

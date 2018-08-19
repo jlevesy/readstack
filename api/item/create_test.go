@@ -1,59 +1,56 @@
-package create
+package item
 
 import (
 	"context"
 	"errors"
 	"testing"
 
-	"github.com/jlevesy/readstack/model"
-	"github.com/jlevesy/readstack/test/stub/repository"
+	"github.com/jlevesy/readstack/api/validation"
 )
 
 func TestItCreatesAndSavesAnItem(t *testing.T) {
-	request := NewRequest("Name", "https://name.com")
-	var savedItem *model.Item
+	request := CreateRequest{"Name", "https://name.com"}
+	var createdItem *Model
 
-	mockRepository := repository.ItemRepositoryStub{
-		OnSave: func(ctx context.Context, i *model.Item) error {
-			savedItem = i
+	mockRepository := RepositoryStub{
+		OnCreate: func(ctx context.Context, i *Model) error {
+			createdItem = i
 			return nil
 		},
 	}
 
-	validator := func(r *Request) []*errors.Violation {
-		return []*errors.Violation{}
+	validator := func(r *CreateRequest) []*validation.Violation {
+		return []*validation.Violation{}
 	}
 
-	subject := NewHandler(validator, &mockRepository)
+	subject := NewCreateHandler(validator, &mockRepository)
 
-	err := subject.Handle(context.Background(), request)
+	err := subject.Handle(context.Background(), &request)
 
 	if err != nil {
 		t.Fatalf("Expected no errors, got %v", err)
 	}
 
-	if savedItem.URL != request.URL {
-		t.Fatalf("Invalid saved URL, expectd %s got %s", request.URL, savedItem.URL)
+	if createdItem.URL != request.URL {
+		t.Fatalf("Invalid saved URL, expectd %s got %s", request.URL, createdItem.URL)
 	}
 
-	if savedItem.Name != request.Name {
-		t.Fatalf("Invalid saved Name, expectd %s got %s", request.Name, savedItem.Name)
+	if createdItem.Name != request.Name {
+		t.Fatalf("Invalid saved Name, expectd %s got %s", request.Name, createdItem.Name)
 	}
 }
 
 func TestItReportsAValdationError(t *testing.T) {
-	request := NewRequest("Name", "https://name.com")
-	var savedItem *model.Item
+	request := CreateRequest{"Name", "https://name.com"}
 
-	mockRepository := repository.ItemRepositoryStub{
-		OnSave: func(ctx context.Context, i *model.Item) error {
-			savedItem = i
+	mockRepository := RepositoryStub{
+		OnCreate: func(ctx context.Context, i *Model) error {
 			return nil
 		},
 	}
 
-	validator := func(r *Request) []*errors.Violation {
-		return []*errors.Violation{
+	validator := func(r *CreateRequest) []*validation.Violation {
+		return []*validation.Violation{
 			{
 				Name:   "Foo",
 				Reason: "Bar",
@@ -61,36 +58,36 @@ func TestItReportsAValdationError(t *testing.T) {
 		}
 	}
 
-	subject := NewHandler(validator, &mockRepository)
+	subject := NewCreateHandler(validator, &mockRepository)
 
-	err := subject.Handle(context.Background(), request)
+	err := subject.Handle(context.Background(), &request)
 
 	if err == nil {
 		t.Fatal("Expected an error, got nothing")
 	}
 
-	if _, ok := err.(*errors.ValidationError); !ok {
+	if _, ok := err.(*validation.Error); !ok {
 		t.Fatalf("Expected a validator error, got %T", err)
 	}
 }
 
 func TestItReportsARepositoryError(t *testing.T) {
-	request := NewRequest("Name", "https://name.com")
-	returnedErr := stdErrors.New("Failed to lalala the database")
+	request := CreateRequest{"Name", "https://name.com"}
+	returnedErr := errors.New("Failed to lalala the database")
 
-	mockRepository := repository.ItemRepositoryStub{
-		OnSave: func(ctx context.Context, i *model.Item) error {
+	mockRepository := RepositoryStub{
+		OnCreate: func(ctx context.Context, i *Model) error {
 			return returnedErr
 		},
 	}
 
-	validator := func(r *Request) []*errors.Violation {
-		return []*errors.Violation{}
+	validator := func(r *CreateRequest) []*validation.Violation {
+		return []*validation.Violation{}
 	}
 
-	subject := NewHandler(validator, &mockRepository)
+	subject := NewCreateHandler(validator, &mockRepository)
 
-	err := subject.Handle(context.Background(), request)
+	err := subject.Handle(context.Background(), &request)
 
 	if err == nil {
 		t.Fatal("Expected an error, got nothing")
