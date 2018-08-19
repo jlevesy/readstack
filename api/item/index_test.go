@@ -1,30 +1,26 @@
-package index
+package item
 
 import (
 	"context"
 	"errors"
 	"reflect"
 	"testing"
-
-	"github.com/jlevesy/readstack/model"
-
-	"github.com/jlevesy/readstack/test/stub/repository"
 )
 
 func TestItShouldReturnAllResults(t *testing.T) {
-	dbResults := []*model.Item{
-		model.NewItem("foo", "bar"),
-		model.NewItem("foo", "bar"),
-		model.NewItem("foo", "bar"),
+	dbResults := []*Model{
+		{0, "foo", "bar"},
+		{1, "foo", "bar"},
+		{2, "foo", "bar"},
 	}
 
-	mockRepository := &repository.ItemRepositoryStub{
-		OnFindAll: func(context.Context) ([]*model.Item, error) {
+	mockRepository := &RepositoryStub{
+		OnFindAll: func(context.Context) ([]*Model, error) {
 			return dbResults, nil
 		},
 	}
 
-	subject := NewHandler(mockRepository)
+	subject := NewIndexHandler(mockRepository)
 
 	res, err := subject.Handle(context.Background())
 
@@ -38,15 +34,15 @@ func TestItShouldReturnAllResults(t *testing.T) {
 }
 
 func TestItForwardsARepositoryError(t *testing.T) {
-	returnedErr := errors.New("Failed to reach database.")
+	returnedErr := errors.New("failed to reach database")
 
-	mockRepository := &repository.ItemRepositoryStub{
-		OnFindAll: func(context.Context) ([]*model.Item, error) {
-			return []*model.Item{}, returnedErr
+	mockRepository := &RepositoryStub{
+		OnFindAll: func(context.Context) ([]*Model, error) {
+			return []*Model{}, returnedErr
 		},
 	}
 
-	subject := NewHandler(mockRepository)
+	subject := NewIndexHandler(mockRepository)
 
 	res, err := subject.Handle(context.Background())
 
