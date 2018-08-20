@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
+	"os"
+	"text/tabwriter"
 
 	"google.golang.org/grpc"
 
@@ -12,6 +15,7 @@ import (
 
 func main() {
 	backend := flag.String("b", "localhost:8080", "address of the backend")
+
 	flag.Parse()
 
 	conn, err := grpc.Dial(*backend, grpc.WithInsecure())
@@ -28,5 +32,17 @@ func main() {
 		log.Fatal("Could not call index endpoint", err)
 	}
 
-	log.Println(res)
+	renderItems(res)
+}
+
+func renderItems(result *api.IndexResult) {
+	w := tabwriter.NewWriter(os.Stdout, 5, 10, 3, ' ', 0)
+	defer w.Flush()
+
+	fmt.Fprintln(w, "ID\tName\tLink")
+	fmt.Fprintln(w, "--\t----\t----")
+
+	for _, item := range result.GetItems() {
+		fmt.Fprintf(w, "%d\t%s\t%s\n", item.GetId(), item.GetName(), item.GetUrl())
+	}
 }
