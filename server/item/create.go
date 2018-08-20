@@ -33,15 +33,20 @@ func CreateValidator(req *CreateRequest) []*validation.Violation {
 // It carries all information needed in order to perform
 // the create item action.
 type CreateRequest struct {
-	Name string `json:"name"`
-	URL  string `json:"url"`
+	Name string
+	URL  string
+}
+
+// CreateResponse carries the created item
+type CreateResponse struct {
+	CreatedItem *Model
 }
 
 // CreateHandler processes incoming requests and returns a result.
 // It is dedicated to perform a new model.Item creation in the
 // given datastore
 type CreateHandler interface {
-	Handle(ctx context.Context, req *CreateRequest) error
+	Handle(ctx context.Context, req *CreateRequest) (*CreateResponse, error)
 }
 
 type createHandler struct {
@@ -54,12 +59,18 @@ func NewCreateHandler(validator CreateValidatorFunc, repository Repository) Crea
 	return &createHandler{validator, repository}
 }
 
-func (h *createHandler) Handle(ctx context.Context, req *CreateRequest) error {
+func (h *createHandler) Handle(ctx context.Context, req *CreateRequest) (*CreateResponse, error) {
 	if errs := h.validator(req); len(errs) > 0 {
-		return validation.NewError(errs)
+		return nil, validation.NewError(errs)
 	}
 
 	item := New(req.Name, req.URL)
 
-	return h.repository.Create(ctx, item)
+	err := h.repository.Create(ctx, item)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &CreateResponse{item}, nil
 }

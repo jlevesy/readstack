@@ -73,7 +73,7 @@ func TestItCreatesAndSavesAnItem(t *testing.T) {
 
 	subject := NewCreateHandler(validator, &mockRepository)
 
-	err := subject.Handle(context.Background(), &request)
+	res, err := subject.Handle(context.Background(), &request)
 
 	if err != nil {
 		t.Fatalf("Expected no errors, got %v", err)
@@ -85,6 +85,10 @@ func TestItCreatesAndSavesAnItem(t *testing.T) {
 
 	if createdItem.Name != request.Name {
 		t.Fatalf("Invalid saved Name, expectd %s got %s", request.Name, createdItem.Name)
+	}
+
+	if !reflect.DeepEqual(res.CreatedItem, createdItem) {
+		t.Fatalf("Created items has been altered")
 	}
 }
 
@@ -108,7 +112,7 @@ func TestItReportsAValdationError(t *testing.T) {
 
 	subject := NewCreateHandler(validator, &mockRepository)
 
-	err := subject.Handle(context.Background(), &request)
+	_, err := subject.Handle(context.Background(), &request)
 
 	if err == nil {
 		t.Fatal("Expected an error, got nothing")
@@ -135,7 +139,7 @@ func TestItReportsARepositoryError(t *testing.T) {
 
 	subject := NewCreateHandler(validator, &mockRepository)
 
-	err := subject.Handle(context.Background(), &request)
+	_, err := subject.Handle(context.Background(), &request)
 
 	if err == nil {
 		t.Fatal("Expected an error, got nothing")

@@ -73,11 +73,15 @@ func main() {
 		logger.Fatal(err)
 	}
 
-	indexHandler := item.NewIndexHandler(itemRepository)
-
 	s := grpc.NewServer()
 
-	api.RegisterItemServer(s, api.NewItemServer(indexHandler))
+	api.RegisterItemServer(
+		s,
+		api.NewItemServer(
+			item.NewIndexHandler(itemRepository),
+			item.NewCreateHandler(item.CreateValidator, itemRepository),
+		),
+	)
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatal(err)

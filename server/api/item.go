@@ -7,13 +7,15 @@ import (
 )
 
 type itemServer struct {
-	index item.IndexHandler
+	index  item.IndexHandler
+	create item.CreateHandler
 }
 
 // NewItemServer returns an instance of an ItemServer
-func NewItemServer(indexHandler item.IndexHandler) ItemServer {
+func NewItemServer(indexHandler item.IndexHandler, create item.CreateHandler) ItemServer {
 	return &itemServer{
-		index: indexHandler,
+		index:  indexHandler,
+		create: create,
 	}
 }
 
@@ -31,6 +33,21 @@ func (i *itemServer) Index(ctx context.Context, _ *IndexRequest) (*IndexResult, 
 	}
 
 	return &IndexResult{Items: items}, nil
+}
+
+func (i *itemServer) Create(ctx context.Context, req *CreateRequest) (*CreateResult, error) {
+	result, err := i.create.Handle(ctx, &item.CreateRequest{Name: req.GetName(), URL: req.GetUrl()})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &CreateResult{
+		Id:   result.CreatedItem.GetID(),
+		Name: result.CreatedItem.Name,
+		Url:  result.CreatedItem.URL,
+	}, nil
+
 }
 
 func toIndexItem(item *item.Model) *IndexItem {
