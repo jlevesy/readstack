@@ -3,7 +3,7 @@ package item
 import (
 	"context"
 
-	"github.com/jlevesy/readstack/api/validation"
+	"github.com/jlevesy/readstack/server/validation"
 )
 
 // CreateValidatorFunc is the validation type used by create.Handler to

@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/jlevesy/readstack/api/item"
+	"github.com/jlevesy/readstack/server/item"
 )
 
 func setup() (item.Repository, func(), error) {

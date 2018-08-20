@@ -2,67 +2,61 @@
 
 
 [[projects]]
+  digest = "1:bbc4aacabe6880bdbce849c64cb061b7eddf39f132af4ea2853ddd32f85fbec3"
   name = "github.com/fatih/camelcase"
   packages = ["."]
+  pruneopts = "UT"
   revision = "44e46d280b43ec1531bb25252440e34f1b800b65"
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:bdb857a8a98ca711b2fbb6393a3537f04a17a2522803ef88c74618746180d3a5"
   name = "github.com/jlevesy/envconfig"
   packages = [
     ".",
-    "setter"
+    "setter",
   ]
+  pruneopts = "UT"
   revision = "d2326d7f441f84c1f4871122501724214f173485"
   version = "v0.1.0"
 
 [[projects]]
   branch = "master"
-  name = "github.com/jlevesy/readstack"
-  packages = [
-    "handler/errors",
-    "handler/item/create",
-    "handler/item/index",
-    "handler/validation",
-    "model",
-    "repository",
-    "test/stub/repository"
-  ]
-  revision = "e7d9d1994cfe7b717260f707c1a28ba4c78cf848"
-
-[[projects]]
-  branch = "master"
+  digest = "1:37ce7d7d80531b227023331002c0d42b4b4b291a96798c82a049d03a54ba79e4"
   name = "github.com/lib/pq"
   packages = [
     ".",
-    "oid"
+    "oid",
   ]
+  pruneopts = "UT"
   revision = "90697d60dd844d5ef6ff15135d0203f65d2f53b8"
 
 [[projects]]
-  name = "github.com/mattn/go-sqlite3"
-  packages = ["."]
-  revision = "25ecb14adfc7543176f7d85291ec7dba82c6f7e4"
-  version = "v1.9.0"
-
-[[projects]]
   branch = "master"
+  digest = "1:cd638908d04442c8b6afd5d0221c21556e76c5e7130448ca97d249b47d66dd41"
   name = "github.com/rubenv/sql-migrate"
   packages = [
     ".",
-    "sqlparse"
+    "sqlparse",
   ]
+  pruneopts = "UT"
   revision = "3f452fc0ebebbb784fdab91f7bc79a31dcacab5c"
 
 [[projects]]
+  digest = "1:fa9a7c0ef59217bd22f32eb7cc027894d73f340a5633258cc079dec025db6a7f"
   name = "gopkg.in/gorp.v1"
   packages = ["."]
+  pruneopts = "UT"
   revision = "c87af80f3cc5036b55b83d77171e156791085e2e"
   version = "v1.7.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "cfb1157ce0be688c7344e6f6a934635dfdda366ff520d9d34ae63a79632549a5"
+  input-imports = [
+    "github.com/jlevesy/envconfig",
+    "github.com/lib/pq",
+    "github.com/rubenv/sql-migrate",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

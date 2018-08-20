@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/jlevesy/readstack/api/validation"
+	"github.com/jlevesy/readstack/server/validation"
 )
 
 func TestValidator(t *testing.T) {
