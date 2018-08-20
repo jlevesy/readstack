@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"errors"
 
 	"github.com/jlevesy/readstack/server/item"
 )
@@ -18,6 +17,26 @@ func NewItemServer(indexHandler item.IndexHandler) ItemServer {
 	}
 }
 
-func (i *itemServer) Index(ctx context.Context, req *IndexRequest) (*IndexResult, error) {
-	return nil, errors.New("Not implemented")
+func (i *itemServer) Index(ctx context.Context, _ *IndexRequest) (*IndexResult, error) {
+	result, err := i.index.Handle(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	items := make([]*IndexItem, 0, len(result.Items))
+
+	for _, item := range result.Items {
+		items = append(items, toIndexItem(item))
+	}
+
+	return &IndexResult{Items: items}, nil
+}
+
+func toIndexItem(item *item.Model) *IndexItem {
+	return &IndexItem{
+		Id:   item.GetID(),
+		Name: item.Name,
+		Url:  item.URL,
+	}
 }

@@ -10,5 +10,11 @@ message IndexRequest {
 }
 
 message IndexResult {
-  string name = 1;
+  repeated IndexItem items = 1;
+}
+
+message IndexItem {
+  int64 id = 1;
+  string name = 2;
+  string url = 3;
 }
