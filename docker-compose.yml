@@ -27,7 +27,7 @@ services:
     command:
       - go
       - run
-      - backend/cmd/server/main.go
+      - server/cmd/api/main.go
   db:
     image: postgres:alpine
     restart: always
