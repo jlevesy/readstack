@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package api;
+
+service Item {
+  rpc Index(IndexRequest) returns (IndexResult) {}
+}
+
+message IndexRequest {
+}
+
+message IndexResult {
+  string name = 1;
+}
