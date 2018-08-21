@@ -15,6 +15,7 @@ RUN apk add --update \
     go get -v github.com/rubenv/sql-migrate/... && \
     go get -u google.golang.org/grpc && \
     go get -u github.com/golang/protobuf/protoc-gen-go && \
+    go get -u github.com/spf13/cobra/cobra && \
     go get -u github.com/golang/dep/cmd/dep && \
     adduser -D -u ${UID} readstack-developer && \
     chown -R readstack-developer /go
