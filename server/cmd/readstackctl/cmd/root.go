@@ -7,24 +7,23 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"google.golang.org/grpc"
+
+	"github.com/jlevesy/readstack/server/api"
 )
 
 var (
-	cfgFile    string
-	backendURL *string
+	cfgFile string
+
+	host string
 )
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "readstackctl",
 	Short: "Manage and share your reading todo list",
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
+// Execute is the entrypoint of readstackctl
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -35,30 +34,35 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	backendURL = rootCmd.PersistentFlags().StringP("backend", "b", "localhost:8080", "Address of the Readstack server")
+	rootCmd.PersistentFlags().StringVarP(&host, "host", "H", "localhost:8080", "Address of the Readstack server")
 }
 
-// initConfig reads in config file and ENV variables if set.
+func initClient() (*grpc.ClientConn, api.ItemClient, error) {
+	conn, err := grpc.Dial(host, grpc.WithInsecure())
+
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return conn, api.NewItemClient(conn), nil
+}
+
 func initConfig() {
 	if cfgFile != "" {
-		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
 		home, err := homedir.Dir()
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
 		}
 
-		// Search config in home directory with name ".readstackctl" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".readstackctl")
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
+	viper.AutomaticEnv()
 
-	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}

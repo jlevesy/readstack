@@ -8,7 +8,6 @@ import (
 	"text/tabwriter"
 
 	"github.com/spf13/cobra"
-	"google.golang.org/grpc"
 
 	"github.com/jlevesy/readstack/server/api"
 )
@@ -18,14 +17,13 @@ var getCmd = &cobra.Command{
 	Use:   "get",
 	Short: "Create a new entry",
 	Run: func(cmd *cobra.Command, args []string) {
-		conn, err := grpc.Dial(*backendURL, grpc.WithInsecure())
+		conn, client, err := initClient()
+
 		if err != nil {
-			log.Fatalf("could not connect to %s: %v", *backendURL, err)
+			log.Fatal(err)
 		}
 
 		defer conn.Close()
-
-		client := api.NewItemClient(conn)
 
 		res, err := client.Index(context.Background(), &api.IndexRequest{})
 		if err != nil {
