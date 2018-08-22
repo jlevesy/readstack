@@ -1,0 +1,9 @@
+#! /bin/sh
+docker run \
+    -ti \
+     --rm \
+    -w /go/src/github.com/jlevesy/readstack \
+    -v ${PWD}:/go/src/github.com/jlevesy/readstack \
+    --network readstack_dev \
+    readstack-toolbox \
+    $@

@@ -1,0 +1,7 @@
+---
+
+development:
+    dialect: postgres
+    datasource: host=db user=readstack password=notsecret dbname=readstack sslmode=disable
+    dir: db/migrations
+    table: migrations

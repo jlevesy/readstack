@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package api;
+
+service Item {
+  rpc Index(IndexRequest) returns (IndexResult) {}
+  rpc Create(CreateRequest) returns (CreateResult) {}
+}
+
+message IndexRequest {
+}
+
+message IndexResult {
+  repeated IndexItem items = 1;
+}
+
+message IndexItem {
+  int64 id = 1;
+  string name = 2;
+  string url = 3;
+}
+
+message CreateRequest {
+  string name = 1;
+  string url = 2;
+}
+
+message CreateResult {
+  int64 id = 1;
+  string name = 2;
+  string url = 3;
+}
