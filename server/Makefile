@@ -23,7 +23,7 @@ integration_test:
 .PHONY: unit_test
 unit_test:
 	@echo "Running unit tests..."
-	@go test -race -cover -timeout=5s -run=$(T) `go list ./... | grep -v integration | grep -v api`
+	@go test -race -cover -timeout=5s -run=$(T) `go list ./... | grep -v integration`
 
 .PHONY: migate_up
 migrate_up:
