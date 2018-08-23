@@ -13,14 +13,16 @@ RUN apk add --update \
     automake \
     libtool \
     postgresql-client && \
-    git clone -b v1.14.1 https://github.com/grpc/grpc && \
-    cd grpc && git submodule update --init && make grpc_php_plugin && \
     go get -v github.com/rubenv/sql-migrate/... && \
     go get -u google.golang.org/grpc && \
     go get -u github.com/golang/protobuf/protoc-gen-go && \
     go get -u github.com/spf13/cobra/cobra && \
     go get -u github.com/golang/dep/cmd/dep && \
     adduser -D -u ${UID} readstack-developer && \
-    chown -R readstack-developer /go
+    chown -R readstack-developer /go && \
+    cd /home/readstack-developer && \
+    git clone -b v1.14.1 https://github.com/grpc/grpc && \
+    cd grpc && git submodule update --init && make grpc_php_plugin && \
+    chown -R readstack-developer /home/readstack-developer/grpc
 
 USER $UID:$GID
