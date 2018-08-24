@@ -1,5 +1,9 @@
 all: create_dist build
 
+.PHONY: install
+install:
+	go install cmd/readstackctl/main.go
+
 .PHONY: static_build
 static_build: vendor
 	@CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags -static' -o dist/server backend/cmd/server/main.go
