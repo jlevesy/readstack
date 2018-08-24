@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -40,7 +39,7 @@ var createCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		fmt.Printf("Successfully created item %d with name %s \n", result.GetId(), result.GetName())
+		log.Printf("Successfully created item %d with name %s \n", result.GetId(), result.GetName())
 	},
 }
 
