@@ -58,4 +58,20 @@ func TestRepository(t *testing.T) {
 	if !reflect.DeepEqual(item, originalItem) {
 		t.Errorf("Read item is not deeply equal to written item")
 	}
+
+	err = repo.Delete(context.Background(), item)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	items, err = repo.FindAll(context.Background())
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(items) != 0 {
+		t.Errorf("Invalid count of items, expected 0 items got  %d", len(items))
+	}
 }

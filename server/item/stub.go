@@ -7,6 +7,7 @@ import (
 type RepositoryStub struct {
 	OnFindAll func(context.Context) ([]*Model, error)
 	OnCreate  func(context.Context, *Model) error
+	OnDelete  func(context.Context, *Model) error
 }
 
 func (i *RepositoryStub) FindAll(ctx context.Context) ([]*Model, error) {
@@ -15,4 +16,8 @@ func (i *RepositoryStub) FindAll(ctx context.Context) ([]*Model, error) {
 
 func (i *RepositoryStub) Create(ctx context.Context, item *Model) error {
 	return i.OnCreate(ctx, item)
+}
+
+func (i *RepositoryStub) Delete(ctx context.Context, item *Model) error {
+	return i.OnDelete(ctx, item)
 }
