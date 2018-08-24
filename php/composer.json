@@ -1,0 +1,19 @@
+{
+  "name": "jlevesy/readstackctl-php",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Julien Levesy",
+      "email": "jlevesy@gmail.com"
+    }
+  ],
+  "require": {
+    "grpc/grpc": "^v1.3.0",
+    "google/protobuf": "^v3.3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Readstack\\": "src/Readstack"
+    }
+  }
+}
