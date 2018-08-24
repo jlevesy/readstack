@@ -4,13 +4,14 @@ ARG UID
 ARG GID
 
 RUN apk add --update \
-    git \
+    alpine-sdk \
     bash \
     nodejs \
     yarn \
-    make \
-    g++ \
     protobuf \
+    autoconf \
+    automake \
+    libtool \
     postgresql-client && \
     go get -v github.com/rubenv/sql-migrate/... && \
     go get -u google.golang.org/grpc && \
@@ -18,6 +19,10 @@ RUN apk add --update \
     go get -u github.com/spf13/cobra/cobra && \
     go get -u github.com/golang/dep/cmd/dep && \
     adduser -D -u ${UID} readstack-developer && \
-    chown -R readstack-developer /go
+    chown -R readstack-developer /go && \
+    cd /home/readstack-developer && \
+    git clone -b v1.14.1 https://github.com/grpc/grpc && \
+    cd grpc && git submodule update --init && make grpc_php_plugin && \
+    chown -R readstack-developer /home/readstack-developer/grpc
 
 USER $UID:$GID
