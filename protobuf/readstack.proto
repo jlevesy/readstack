@@ -34,7 +34,6 @@ message CreateResult {
 
 message DeleteRequest {
   int64 id = 1;
-  string foo = 2;
 }
 
 message DeleteResult {}
