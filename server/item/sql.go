@@ -66,6 +66,21 @@ func (i *sqlRepository) FindAll(ctx context.Context) ([]*Model, error) {
 }
 
 func (i *sqlRepository) Delete(ctx context.Context, item *Model) error {
-	_, err := i.delete.ExecContext(ctx, item.GetID())
-	return err
+	res, err := i.delete.ExecContext(ctx, item.GetID())
+
+	if err != nil {
+		return err
+	}
+
+	count, err := res.RowsAffected()
+
+	if err != nil {
+		return err
+	}
+
+	if count == 0 {
+		return ErrItemNotFound
+	}
+
+	return nil
 }

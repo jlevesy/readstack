@@ -53,13 +53,13 @@ func TestRepository(t *testing.T) {
 		t.Errorf("Invalid count of items, expected 1 got %d", len(items))
 	}
 
-	item := items[0]
+	i := items[0]
 
-	if !reflect.DeepEqual(item, originalItem) {
+	if !reflect.DeepEqual(i, originalItem) {
 		t.Errorf("Read item is not deeply equal to written item")
 	}
 
-	err = repo.Delete(context.Background(), item)
+	err = repo.Delete(context.Background(), i)
 
 	if err != nil {
 		t.Fatal(err)
@@ -73,5 +73,11 @@ func TestRepository(t *testing.T) {
 
 	if len(items) != 0 {
 		t.Errorf("Invalid count of items, expected 0 items got  %d", len(items))
+	}
+
+	err = repo.Delete(context.Background(), i)
+
+	if err != item.ErrItemNotFound {
+		t.Errorf("Expected errNotFound got %v", err)
 	}
 }
