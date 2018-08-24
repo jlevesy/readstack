@@ -3,13 +3,13 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"net"
-	"os"
-	"time"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware"
+	"github.com/grpc-ecosystem/go-grpc-middleware/logging/logrus"
 	"github.com/jlevesy/envconfig"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
 	"github.com/jlevesy/readstack/server/api"
@@ -23,11 +23,9 @@ const (
 )
 
 type config struct {
-	PostgresURL    string
-	ListenHost     string
-	ListenPort     int
-	HandlerTimeout time.Duration
-	WebAssetsPath  string
+	PostgresURL string
+	ListenHost  string
+	ListenPort  int
 }
 
 func (c *config) listenURL() string {
@@ -35,45 +33,51 @@ func (c *config) listenURL() string {
 }
 
 const (
-	defaultPostgresURL     = "postgres://root:root@localhost:5672/readstack"
-	defaultListenHost      = ""
-	defaultListenPort      = 8080
-	defaultHandlerTimemout = 200 * time.Millisecond
-	defaultWebAssetsPath   = "dist/web"
+	defaultPostgresURL = "postgres://root:root@localhost:5672/readstack"
+	defaultListenHost  = ""
+	defaultListenPort  = 8080
 )
 
 func main() {
-	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+	logger := logrus.New()
+	entry := logrus.NewEntry(logger)
 
-	logger.Println("Starting the server...")
+	logger.Info("Starting the server...")
 
-	config := config{defaultPostgresURL, defaultListenHost, defaultListenPort, defaultHandlerTimemout, defaultWebAssetsPath}
+	config := config{defaultPostgresURL, defaultListenHost, defaultListenPort}
 
 	if err := envconfig.New(readstackAppName, envSeparator).Load(&config); err != nil {
-		logger.Fatal(err)
+		logger.WithError(err).Fatal("Failed to load configuration")
 	}
 
-	logger.Printf("Loaded config %v", config)
+	logger.Infof("Loaded config %v", config)
 
 	lis, err := net.Listen("tcp", config.listenURL())
 
 	if err != nil {
-		logger.Fatal(err)
+		logger.WithError(err).Fatal("Failed to open listening socket")
 	}
 
 	db, err := sql.Open("postgres", config.PostgresURL)
 
 	if err != nil {
-		logger.Fatal(err)
+		logger.WithError(err).Fatal("Failed to open database connection")
 	}
 
 	itemRepository, err := item.NewSQLRepository(db)
 
 	if err != nil {
-		logger.Fatal(err)
+		logger.WithError(err).Fatal("Failed to initialize the item repository")
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc_middleware.WithUnaryServerChain(
+			grpc_logrus.UnaryServerInterceptor(entry),
+		),
+		grpc_middleware.WithStreamServerChain(
+			grpc_logrus.StreamServerInterceptor(entry),
+		),
+	)
 
 	api.RegisterItemServer(
 		s,
@@ -85,6 +89,6 @@ func main() {
 	)
 
 	if err := s.Serve(lis); err != nil {
-		log.Fatal(err)
+		logger.WithError(err).Error("Server exited with an error")
 	}
 }
