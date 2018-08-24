@@ -80,6 +80,7 @@ func main() {
 		api.NewItemServer(
 			item.NewIndexHandler(itemRepository),
 			item.NewCreateHandler(item.CreateValidator, itemRepository),
+			item.NewDeleteHandler(itemRepository),
 		),
 	)
 

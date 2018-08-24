@@ -8,8 +8,10 @@ import (
 type sqlRepository struct {
 	create  *sql.Stmt
 	findAll *sql.Stmt
+	delete  *sql.Stmt
 }
 
+// NewSQLRepository returns an SQL repository
 func NewSQLRepository(db *sql.DB) (Repository, error) {
 	createStmt, err := db.Prepare("INSERT INTO items(name, url) VALUES($1, $2) RETURNING id")
 
@@ -23,7 +25,13 @@ func NewSQLRepository(db *sql.DB) (Repository, error) {
 		return nil, err
 	}
 
-	return &sqlRepository{createStmt, findAllStmt}, nil
+	deleteStmt, err := db.Prepare("DELETE FROM items where id = $1")
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &sqlRepository{createStmt, findAllStmt, deleteStmt}, nil
 }
 
 func (i *sqlRepository) Create(ctx context.Context, item *Model) error {
@@ -55,4 +63,24 @@ func (i *sqlRepository) FindAll(ctx context.Context) ([]*Model, error) {
 	}
 
 	return result, nil
+}
+
+func (i *sqlRepository) Delete(ctx context.Context, item *Model) error {
+	res, err := i.delete.ExecContext(ctx, item.GetID())
+
+	if err != nil {
+		return err
+	}
+
+	count, err := res.RowsAffected()
+
+	if err != nil {
+		return err
+	}
+
+	if count == 0 {
+		return ErrItemNotFound
+	}
+
+	return nil
 }

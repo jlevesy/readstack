@@ -5,6 +5,7 @@ package api;
 service Item {
   rpc Index(IndexRequest) returns (IndexResult) {}
   rpc Create(CreateRequest) returns (CreateResult) {}
+  rpc Delete(DeleteRequest) returns (DeleteResult) {}
 }
 
 message IndexRequest {
@@ -30,3 +31,9 @@ message CreateResult {
   string name = 2;
   string url = 3;
 }
+
+message DeleteRequest {
+  int64 id = 1;
+}
+
+message DeleteResult {}

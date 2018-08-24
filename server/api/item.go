@@ -9,13 +9,15 @@ import (
 type itemServer struct {
 	index  item.IndexHandler
 	create item.CreateHandler
+	delete item.DeleteHandler
 }
 
 // NewItemServer returns an instance of an ItemServer
-func NewItemServer(indexHandler item.IndexHandler, create item.CreateHandler) ItemServer {
+func NewItemServer(indexHandler item.IndexHandler, create item.CreateHandler, delete item.DeleteHandler) ItemServer {
 	return &itemServer{
 		index:  indexHandler,
 		create: create,
+		delete: delete,
 	}
 }
 
@@ -48,6 +50,16 @@ func (i *itemServer) Create(ctx context.Context, req *CreateRequest) (*CreateRes
 		Url:  result.CreatedItem.URL,
 	}, nil
 
+}
+
+func (i *itemServer) Delete(ctx context.Context, req *DeleteRequest) (*DeleteResult, error) {
+	err := i.delete.Handle(ctx, &item.DeleteRequest{ID: req.GetId()})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &DeleteResult{}, nil
 }
 
 func toIndexItem(item *item.Model) *IndexItem {
