@@ -8,5 +8,10 @@ generate_go:
 	@protoc -I protobuf/ protobuf/readstack.proto --go_out=plugins=grpc:server/api
 
 .PHONY: toolbox
-toolbox:
+toolbox: cachedirs
 	@docker build --build-arg=UID=$(shell id -u) --build-arg=GID=$(shell id -g) -t readstack-toolbox -f Dockerfile.toolbox .
+
+.PHONY: cachedirs
+cachedirs:
+	@mkdir -p .gocache/mod
+	@mkdir -p .gocache/build
