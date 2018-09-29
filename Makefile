@@ -1,11 +1,10 @@
+all: create_dist build
+
+
 .PHONY: run_dev
 run_dev:
 	@docker-compose up
 
-.PHONY: generate_go
-generate_go:
-	@mkdir -p server/api
-	@protoc -I protobuf/ protobuf/readstack.proto --go_out=plugins=grpc:server/api
 
 .PHONY: toolbox
 toolbox: cachedirs
@@ -15,3 +14,48 @@ toolbox: cachedirs
 cachedirs:
 	@mkdir -p .gocache/mod
 	@mkdir -p .gocache/build
+
+.PHONY: generate_go
+generate_go:
+	@protoc -I protobuf/ protobuf/readstack.proto --go_out=plugins=grpc:api
+
+.PHONY: install
+install:
+	go install cmd/readstackctl/main.go
+
+.PHONY: static_build
+static_build: vendor
+	@CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags -static' -o dist/server backend/cmd/server/main.go
+
+.PHONY: test
+test: unit_test integration_test
+
+.PHONY: integration_test
+integration_test:
+	@echo "Running integration tests..."
+	@go test -v -race -timeout=10m -run=$(T) ./integration
+
+.PHONY: unit_test
+unit_test:
+	@echo "Running unit tests..."
+	@go test -race -cover -timeout=5s -run=$(T) `go list ./... | grep -v integration`
+
+.PHONY: migate_up
+migrate_up:
+	@sql-migrate up
+
+.PHONY: migate_down
+migrate_down:
+	@sql-migrate down
+
+.PHONY: new_migration
+new_migration:
+	@sql-migrate new
+
+.PHONY: create_dist
+create_dist:
+	@mkdir -p dist
+
+.PHONY: clean
+clean:
+	@rm -rf dist
