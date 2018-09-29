@@ -3,6 +3,10 @@ language: go
 go:
   - master
 
+env:
+  global:
+  - GO111MODULE=on
+
 before_install:
     - mkdir -p $HOME/protobuf && pushd $HOME/protobuf
       && curl -LO 'https://github.com/protocolbuffers/protobuf/releases/download/v3.6.1/protoc-3.6.1-linux-x86_64.zip'
@@ -11,9 +15,6 @@ before_install:
     - export PATH=$HOME/protobuf/bin:$PATH
     - go get -u github.com/golang/protobuf/protoc-gen-go
     - make generate_go
-
-install:
-    - make vendor
 
 script:
     - make unit_test
