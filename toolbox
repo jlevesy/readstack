@@ -4,6 +4,8 @@ docker run \
      --rm \
     -w /go/src/github.com/jlevesy/readstack \
     -v ${PWD}:/go/src/github.com/jlevesy/readstack \
+    -v ${PWD}/.gocache/mod:/go/pkg/mod \
+    -v ${PWD}/.gocache/build:/go/.cache/go-build \
     --network readstack_dev \
     readstack-toolbox \
     $@
