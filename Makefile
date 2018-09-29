@@ -1,10 +1,8 @@
 all: create_dist build
 
-
 .PHONY: run_dev
 run_dev:
 	@docker-compose up
-
 
 .PHONY: toolbox
 toolbox: cachedirs
@@ -17,15 +15,15 @@ cachedirs:
 
 .PHONY: generate_go
 generate_go:
-	@protoc -I protobuf/ protobuf/readstack.proto --go_out=plugins=grpc:api
+	@protoc -I api/ api/readstack.proto --go_out=plugins=grpc:api
 
 .PHONY: install
 install:
 	go install cmd/readstackctl/main.go
 
-.PHONY: static_build
-static_build: vendor
-	@CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags -static' -o dist/server backend/cmd/server/main.go
+.PHONY: build
+build:
+	@CGO_ENABLED=0 GOOS=linux go build -a -ldflags '-extldflags -static' -o dist/server cmd/server/main.go
 
 .PHONY: test
 test: unit_test integration_test
