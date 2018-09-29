@@ -1,9 +1,7 @@
-FROM golang:alpine AS build-back
+FROM golang:1.11-stretch AS build-back
 COPY . /go/src/github.com/jlevesy/readstack
 WORKDIR /go/src/github.com/jlevesy/readstack
-RUN apk --update add make git && \
-  go get -u github.com/golang/dep/cmd/dep && \
-  make static_build
+RUN make static_build
 
 FROM scratch
 ENV READSTACK_WEB_ASSETS_PATH=/readstack/web
