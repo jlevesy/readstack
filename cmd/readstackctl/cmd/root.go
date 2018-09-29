@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 
-	"github.com/jlevesy/readstack/server/api"
+	"github.com/jlevesy/readstack/api"
 )
 
 var (

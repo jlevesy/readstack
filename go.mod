@@ -11,6 +11,7 @@ require (
 	github.com/lib/pq v0.0.0-20180523175426-90697d60dd84
 	github.com/magiconair/properties v1.8.0
 	github.com/mitchellh/go-homedir v1.0.0
+	github.com/mitchellh/mapstructure v1.0.0 // indirect
 	github.com/pelletier/go-toml v1.2.0
 	github.com/rubenv/sql-migrate v0.0.0-20180704111356-3f452fc0ebeb
 	github.com/sirupsen/logrus v1.0.6

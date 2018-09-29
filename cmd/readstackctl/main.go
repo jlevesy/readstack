@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/jlevesy/readstack/server/cmd/readstackctl/cmd"
+	"github.com/jlevesy/readstack/cmd/readstackctl/cmd"
 )
 
 func main() {

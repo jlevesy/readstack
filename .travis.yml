@@ -9,10 +9,8 @@ before_install:
       && unzip protoc-3.6.1-linux-x86_64.zip
       && popd
     - export PATH=$HOME/protobuf/bin:$PATH
-    - go get -u github.com/golang/dep/cmd/dep
     - go get -u github.com/golang/protobuf/protoc-gen-go
     - make generate_go
-    - cd server/
 
 install:
     - make vendor
