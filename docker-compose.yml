@@ -36,8 +36,6 @@ services:
       - POSTGRES_PASSWORD=notsecret
       - POSTGRES_DB=readstack
     volumes:
-        - db:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
+      - db:/var/lib/postgresql/data
     networks:
       - dev
